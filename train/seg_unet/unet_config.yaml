@@ -1,0 +1,28 @@
+method: bayes
+metric:
+  name: val_loss
+  goal: minimize
+
+parameters:
+    epochs:
+        value: 100
+    val_interval:
+        value: 100
+    
+    batch_size:
+        values: [2,4,8,16,32]
+    
+    lr:
+        distribution: uniform
+        min: 0.00001
+        max: 0.01
+    encoder_name:
+        values: ["resnet34", "resnet50",  "resnet101"]
+
+    activation:
+        values: ["sigmoid", "softmax"] #, "logsoftmax", "tanh", "identity"]
+    loss:
+        values: ["JaccardLoss", "DiceLoss"] #, "FocalLoss", "SoftCrossEntropyLoss"]
+    optimizer:
+        values: ['adam', 'sgd', 'adamw']
+
