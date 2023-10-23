@@ -15,35 +15,33 @@ import pickle
 import re
 import sys
 import warnings
-from concurrent.futures import FIRST_EXCEPTION, ProcessPoolExecutor, as_completed, wait
+from concurrent.futures import (FIRST_EXCEPTION, ProcessPoolExecutor,
+                                as_completed, wait)
 from functools import reduce
 from importlib import import_module
 from multiprocessing import Lock, Pool
-import sys
 
 sys.path.append("/root/autodl-tmp/archive/v2/metrics")
-from utils import load_img, rm_n_mkdir, get_curtime
-import cv2
 import time
+
+import cv2
 import numpy as np
 import psutil
 import scipy.io as sio
 import torch
 import torch.utils.data as data
 import tqdm
+from utils import get_curtime, load_img, rm_n_mkdir
+
 sys.path.append("/root/autodl-tmp/archive/v2/models")
-from hovernet.dataloader.infer_loader import SerializeArray, SerializeFileList
-from hovernet.misc.utils import (
-    color_deconvolution,
-    cropping_center,
-    get_bounding_box,
-    log_debug,
-    log_info,
-    rm_n_mkdir,
-)
-from hovernet.misc.viz_utils import colorize, visualize_instances_dict
-from skimage import color
 import base as base
+from skimage import color
+
+from hovernet.dataloader.infer_loader import SerializeArray, SerializeFileList
+from hovernet.misc.utils import (color_deconvolution, cropping_center,
+                                 get_bounding_box, log_debug, log_info,
+                                 rm_n_mkdir)
+from hovernet.misc.viz_utils import colorize, visualize_instances_dict
 
 
 ####

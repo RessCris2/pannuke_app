@@ -1,18 +1,18 @@
 # -*- coding:utf-8 -*-
 
-import numpy as np
+import glob
 import os
+
 import cv2
+import numpy as np
+import segmentation_models_pytorch as smp
 import torch
 import torch.nn as nn
 import torchvision
-from torch.utils.data import DataLoader
-from torch.utils.data import Dataset as BaseDataset
-import glob
-
-import segmentation_models_pytorch as smp
 from segmentation_models_pytorch.utils.losses import DiceLoss
 from segmentation_models_pytorch.utils.metrics import IoU
+from torch.utils.data import DataLoader
+from torch.utils.data import Dataset as BaseDataset
 
 
 ## 预处理数据集 

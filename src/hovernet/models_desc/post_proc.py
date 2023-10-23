@@ -1,18 +1,13 @@
+import warnings
+
 import cv2
 import numpy as np
-
-from scipy.ndimage import filters, measurements
-from scipy.ndimage.morphology import (
-    binary_dilation,
-    binary_fill_holes,
-    distance_transform_cdt,
-    distance_transform_edt,
-)
-
-from skimage.segmentation import watershed
 from misc.utils import get_bounding_box, remove_small_objects
-
-import warnings
+from scipy.ndimage import filters, measurements
+from scipy.ndimage.morphology import (binary_dilation, binary_fill_holes,
+                                      distance_transform_cdt,
+                                      distance_transform_edt)
+from skimage.segmentation import watershed
 
 
 def noop(*args, **kargs):

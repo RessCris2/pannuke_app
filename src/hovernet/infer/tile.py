@@ -14,13 +14,16 @@ import pickle
 import re
 import sys
 import warnings
-from concurrent.futures import FIRST_EXCEPTION, ProcessPoolExecutor, as_completed, wait
+from concurrent.futures import (FIRST_EXCEPTION, ProcessPoolExecutor,
+                                as_completed, wait)
 from functools import reduce
 from importlib import import_module
 from multiprocessing import Lock, Pool
-import sys
+
 sys.path.append("/root/autodl-tmp/hover_net")
 
+import base
+import convert_format
 import cv2
 import numpy as np
 import psutil
@@ -29,19 +32,10 @@ import torch
 import torch.utils.data as data
 import tqdm
 from dataloader.infer_loader import SerializeArray, SerializeFileList
-from misc.utils import (
-    color_deconvolution,
-    cropping_center,
-    get_bounding_box,
-    log_debug,
-    log_info,
-    rm_n_mkdir,
-)
+from misc.utils import (color_deconvolution, cropping_center, get_bounding_box,
+                        log_debug, log_info, rm_n_mkdir)
 from misc.viz_utils import colorize, visualize_instances_dict
 from skimage import color
-
-import convert_format
-import base
 
 
 ####

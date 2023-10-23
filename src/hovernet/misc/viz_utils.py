@@ -1,12 +1,15 @@
-import cv2
+import colorsys
+import itertools
 import math
 import random
-import colorsys
-import numpy as np
-import itertools
+
+import cv2
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib import cm
+
 from .utils import get_bounding_box
+
 # from .utils import get_bounding_box
 
 

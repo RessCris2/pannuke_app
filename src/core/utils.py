@@ -1,21 +1,22 @@
 # %load_ext autoreload
 # %autoreload 2
-import os
-import torch
-import numpy as np
-from skimage.morphology import erosion, disk 
-import cv2
-import shutil
-import openslide
-from PIL import Image
-import time
-from os.path import join as opj
-import glob 
-import os
+import glob
 import logging
-from logging import handlers
+import os
+import shutil
+import time
 from functools import wraps
+from logging import handlers
+from os.path import join as opj
+
+import cv2
+import numpy as np
+import openslide
+import torch
 import yaml
+from PIL import Image
+from skimage.morphology import disk, erosion
+
 
 def read_yaml_to_dict(yaml_path: str, ):
     with open(yaml_path) as file:

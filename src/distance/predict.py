@@ -1,17 +1,19 @@
 """对模型预测结果，应用后处理算法，得到最后的分割结果
 """
 
+import pathlib
 import sys
+from os.path import join as opj
+
 import cv2
 import numpy as np
-import pathlib
-from os.path import join as opj
 from tqdm import tqdm
 
+from ..core.utils import find_files, load_img, loads_model, rm_n_mkdir
 from .dataloader import data_aug
-from .post_proc import post_process
-from ..core.utils import loads_model,load_img, find_files, rm_n_mkdir
 from .dist_net import DIST
+from .post_proc import post_process
+
 
 def predict(model, img):
     img = data_aug()(img).unsqueeze(0)

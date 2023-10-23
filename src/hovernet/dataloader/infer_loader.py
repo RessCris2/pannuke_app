@@ -1,13 +1,12 @@
-import sys
 import math
-import numpy as np
+import sys
+
 import cv2
 import matplotlib.pyplot as plt
-
+import numpy as np
+import psutil
 import torch
 import torch.utils.data as data
-
-import psutil
 
 
 ####

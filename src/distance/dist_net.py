@@ -8,9 +8,10 @@
 """
 import torch
 from torch import nn
-from .nets.unet import Unet
-from .dataloader import DISTDataset
 from torch.utils.data import DataLoader
+
+from .dataloader import DISTDataset
+from .nets.unet import Unet
 
 
 class DIST(nn.Module):
