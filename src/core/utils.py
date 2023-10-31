@@ -3,23 +3,9 @@
 import glob
 import logging
 import os
-<<<<<<< HEAD
-import torch
-import numpy as np
-from skimage.morphology import erosion, disk
-import cv2
-=======
->>>>>>> fc3f85308be077f66c3b8ce25a4c1d8df8a13786
 import shutil
 import time
-<<<<<<< HEAD
-from os.path import join as opj
-import glob
-import logging
-=======
->>>>>>> fc3f85308be077f66c3b8ce25a4c1d8df8a13786
 from functools import wraps
-from logging import handlers
 from os.path import join as opj
 
 import cv2
@@ -29,7 +15,6 @@ import torch
 import yaml
 from PIL import Image
 from skimage.morphology import disk, erosion
-
 
 
 def read_yaml_to_dict(
@@ -48,11 +33,7 @@ def check_or_create(path):
         os.makedirs(path)
 
 
-<<<<<<< HEAD
 # utils
-=======
-## utils
->>>>>>> fc3f85308be077f66c3b8ce25a4c1d8df8a13786
 def add_contours(rgb_image, contour, ds=2):
     """
     Adds contours to images.
@@ -69,11 +50,7 @@ def loads_model(model, path, map_location="cpu", mode="eval"):
     # model = TheModelClass(*args, **kwargs)
     model.load_state_dict(torch.load(path, map_location=map_location))
 
-<<<<<<< HEAD
     if mode == "evel":
-=======
-    if mode == 'evel':
->>>>>>> fc3f85308be077f66c3b8ce25a4c1d8df8a13786
         model.eval()  # 用于预测时使用
     else:
         model.train()  # 用于继续训练时使用
@@ -130,7 +107,6 @@ def rm_n_mkdir(dir_path):
 
 def svs_to_tif(path):
     img = openslide.OpenSlide(path)
-<<<<<<< HEAD
     cv2.imwrite(
         path.replace("svs", "tif"),
         np.array(img.read_region((0, 0), 0, img.level_dimensions[0])),
@@ -144,19 +120,6 @@ def save_img(path, img):
         Image.fromarray(img.astype(np.uint8)).save(path, "PNG")
     elif path.endswith("jpg"):
         Image.fromarray(img.astype(np.uint8)).save(path, "JPEG")
-=======
-    cv2.imwrite(path.replace('svs', 'tif'),
-                np.array(img.read_region((0, 0), 0, img.level_dimensions[0])))
-
-
-def save_img(path, img):
-    if path.endswith('npy'):
-        np.save(path, img)
-    elif path.endswith('png'):
-        Image.fromarray(img.astype(np.uint8)).save(path, 'PNG')
-    elif path.endswith('jpg'):
-        Image.fromarray(img.astype(np.uint8)).save(path, 'JPEG')
->>>>>>> fc3f85308be077f66c3b8ce25a4c1d8df8a13786
 
 
 def get_curtime():
@@ -166,37 +129,19 @@ def get_curtime():
 
 def find_files(path, ext, exs=None):
     file_list = glob.glob(opj(path, "*.{}".format(ext)))
-<<<<<<< HEAD
     if ext == "jpg":
         if exs is not None:
-=======
-    if ext == 'jpg':
-        if exs is not None:
-
->>>>>>> fc3f85308be077f66c3b8ce25a4c1d8df8a13786
             exs = np.load(exs, allow_pickle=True)
             for ex in exs:
                 try:
                     # 尝试移除，如果不存在，就跳过
                     file_list.remove(ex)
-<<<<<<< HEAD
                 except Exception:
-=======
-                except:
->>>>>>> fc3f85308be077f66c3b8ce25a4c1d8df8a13786
                     continue
     return file_list
 
 
-<<<<<<< HEAD
 def get_logger(log_file_name, log_dir, level=logging.INFO, when="D", back_count=10):
-=======
-def get_logger(log_file_name,
-               log_dir,
-               level=logging.INFO,
-               when='D',
-               back_count=10):
->>>>>>> fc3f85308be077f66c3b8ce25a4c1d8df8a13786
     """
     params:
         log_file_name: 日志名称, 同时也会和 log_dir, 拼接为最终的log文件名称
@@ -231,27 +176,16 @@ def get_logger(log_file_name,
 
     # 创建格式器
     formatter = logging.Formatter(
-<<<<<<< HEAD
         "%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s"
-=======
-        '%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s'
->>>>>>> fc3f85308be077f66c3b8ce25a4c1d8df8a13786
     )
 
     # 创建处理器：ch为控制台处理器，fh为文件处理器
     ch = logging.StreamHandler()
     ch.setLevel(level)
     # 输出到文件
-<<<<<<< HEAD
     fh = logging.handlers.TimedRotatingFileHandler(
         filename=log_file_path, when=when, backupCount=back_count, encoding="utf-8"
     )
-=======
-    fh = logging.handlers.TimedRotatingFileHandler(filename=log_file_path,
-                                                   when=when,
-                                                   backupCount=back_count,
-                                                   encoding='utf-8')
->>>>>>> fc3f85308be077f66c3b8ce25a4c1d8df8a13786
     fh.setLevel(level)
     # 设置日志输出格式
     fh.setFormatter(formatter)
@@ -264,12 +198,7 @@ def get_logger(log_file_name,
 
 
 def fn_time(func):
-<<<<<<< HEAD
     """耗时装饰器"""
-=======
-    """耗时装饰器
-    """
->>>>>>> fc3f85308be077f66c3b8ce25a4c1d8df8a13786
 
     @wraps(func)
     def inner(*args, **kwargs):
@@ -294,8 +223,9 @@ def fetch_inst_centroid_maskrcnn(pred_masks):
         rmin, rmax, cmin, cmax = get_bounding_box(inst_mapp)
         #     rmin, cmin, rmax, cmax= pred_bboxes[inst_id]
         inst_bbox = np.array([[rmin, cmin], [rmax, cmax]])
-        inst_mappp = inst_mapp[inst_bbox[0][0]:inst_bbox[1][0],
-                               inst_bbox[0][1]:inst_bbox[1][1]]
+        inst_mappp = inst_mapp[
+            inst_bbox[0][0] : inst_bbox[1][0], inst_bbox[0][1] : inst_bbox[1][1]
+        ]
         inst_map = inst_mappp.astype(np.uint8)
 
         inst_moment = cv2.moments(inst_map)
@@ -329,7 +259,6 @@ def transfer_inst_format(true_inst, true_type_map):
     if 0 in true_inst_id:
         true_inst_id.remove(0)
     try:
-<<<<<<< HEAD
         true_masks = np.stack(
             [(true_inst == inst_id).astype(int) for inst_id in true_inst_id]
         )
@@ -364,49 +293,13 @@ def transfer_inst_format(true_inst, true_type_map):
     true.update({"masks": true_masks})
     true.update({"labels": true_labels})
     true.update({"centroids": true_centroids})
-=======
-        true_masks = np.stack([(true_inst == inst_id).astype(int)
-                               for inst_id in true_inst_id])
-    except:
-        print('something wrong')
-    true_bboxes = np.stack([
-        get_bounding_box((true_inst == inst_id).astype(int))
-        for inst_id in true_inst_id
-    ])
-    true_scores = np.array([0.99] * len(true_inst_id))
-    # fake one!
-    if true_type_map is None:
-        true_labels = np.array([1] * len(true_inst_id))  ## 这部分要处理
-    else:
-        true_labels = np.array([
-            np.unique(true_type_map[true_inst == inst_id])[0]
-            for inst_id in true_inst_id
-        ]) - 1  # 对 type_map取值，待测试; 有很大bug的样子
-
-    true_centroids = fetch_inst_centroid_maskrcnn(true_masks)
-
-    true.update({'bboxes': true_bboxes})
-    true.update({'scores': true_scores})
-    true.update({'masks': true_masks})
-    true.update({'labels': true_labels})
-    true.update({'centroids': true_centroids})
->>>>>>> fc3f85308be077f66c3b8ce25a4c1d8df8a13786
     return true
 
 
 def load_gt(img_path, is_class=True):
-<<<<<<< HEAD
     """获取相应 img_path 的 gt 标签"""
     type_mask = load_img(img_path.replace("images", "seg_mask").replace("jpg", "png"))
     inst_mask = load_img(img_path.replace("images", "inst").replace("jpg", "npy"))
-=======
-    """获取相应 img_path 的 gt 标签
-    """
-    type_mask = load_img(
-        img_path.replace("images", 'seg_mask').replace("jpg", 'png'))
-    inst_mask = load_img(
-        img_path.replace("images", 'inst').replace("jpg", 'npy'))
->>>>>>> fc3f85308be077f66c3b8ce25a4c1d8df8a13786
     if is_class:
         true = transfer_inst_format(inst_mask, type_mask)
     else:
