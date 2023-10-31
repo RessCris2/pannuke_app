@@ -1,5 +1,6 @@
 import multiprocessing as mp
-from concurrent.futures import FIRST_EXCEPTION, ProcessPoolExecutor, as_completed, wait
+from concurrent.futures import (FIRST_EXCEPTION, ProcessPoolExecutor,
+                                as_completed, wait)
 from multiprocessing import Lock, Pool
 
 mp.set_start_method("spawn", True)  # ! must be at top for VScode debugging
@@ -27,13 +28,8 @@ import torch.utils.data as data
 import tqdm
 from dataloader.infer_loader import SerializeArray, SerializeFileList
 from docopt import docopt
-from misc.utils import (
-    cropping_center,
-    get_bounding_box,
-    log_debug,
-    log_info,
-    rm_n_mkdir,
-)
+from misc.utils import (cropping_center, get_bounding_box, log_debug, log_info,
+                        rm_n_mkdir)
 from misc.wsi_handler import get_file_handler
 
 from . import base

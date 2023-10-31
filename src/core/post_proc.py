@@ -3,12 +3,13 @@
 """ 最后得到是不同的实例, 给力! 每个 instance 对应了一个 id
 """
 
-from skimage.segmentation import watershed
-import numpy as np
-from skimage.measure import label
-from skimage.morphology import reconstruction, dilation, erosion, disk, diamond, square
-from skimage import img_as_ubyte, img_as_float
 import cv2
+import numpy as np
+from skimage import img_as_float, img_as_ubyte
+from skimage.measure import label
+from skimage.morphology import (diamond, dilation, disk, erosion,
+                                reconstruction, square)
+from skimage.segmentation import watershed
 
 
 def prepare_prob(img, convertuint8=True, inverse=True):

@@ -1,16 +1,20 @@
+import sys
 import warnings
-import torch
+
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy
+import torch
 from scipy.optimize import linear_sum_assignment
-import sys
+
 sys.path.append("/root/autodl-tmp/archive/core/metrics")
-from utils import rm_n_mkdir, find_files, load_img, get_bounding_box
+from utils import find_files, get_bounding_box, load_img, rm_n_mkdir
+
 torch.cuda.empty_cache()
-from utils import fn_time
 from tqdm import tqdm
+from utils import fn_time
+
 
 # --------------------------Optimised for Speed
 def get_fast_aji(true_id_list, true_masks, pred_id_list, pred_masks):

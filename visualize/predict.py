@@ -1,8 +1,10 @@
 import sys
+
 sys.path.append("/root/autodl-tmp/viax")
+import numpy as np
+
 from src.core import infer_base
 from src.core.eval_config import model_path_dict
-import numpy as np
 
 # seg 
 img_path = "/root/autodl-tmp/viax/datasets/consep/images/train/train_1_000.jpg"

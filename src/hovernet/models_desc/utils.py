@@ -1,9 +1,8 @@
 import math
-import numpy as np
 
+import numpy as np
 import torch
 import torch.nn.functional as F
-
 from matplotlib import cm
 
 

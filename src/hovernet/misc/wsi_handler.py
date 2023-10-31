@@ -1,12 +1,11 @@
-from collections import OrderedDict
-import cv2
-import numpy as np
-from skimage import img_as_ubyte
-from skimage import color
 import re
 import subprocess
+from collections import OrderedDict
 
+import cv2
+import numpy as np
 import openslide
+from skimage import color, img_as_ubyte
 
 
 class FileHandler(object):

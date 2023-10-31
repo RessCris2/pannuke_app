@@ -1,19 +1,23 @@
 import sys
+
 sys.path.append("/root/autodl-tmp/archive/v2/models/dist")
 sys.path.append("/root/autodl-tmp/archive/metrics")
-from utils import load_img, get_bounding_box, rm_n_mkdir, find_files, load_model
-from dist_net import DIST
-from post_proc import post_process
-import cv2
-import torch
-from torchmetrics.detection.mean_ap import MeanAveragePrecision
-
-from dataloader import data_aug
-import numpy as np
 import pathlib
 from os.path import join as opj
+
+import cv2
+import numpy as np
+import torch
+from dataloader import data_aug
+from dist_net import DIST
+from post_proc import post_process
+from torchmetrics.detection.mean_ap import MeanAveragePrecision
 from tqdm import tqdm
+from utils import (find_files, get_bounding_box, load_img, load_model,
+                   rm_n_mkdir)
+
 from predict import predict
+
 
 def transfer_inst_format(true_inst):
     """ 将 inst [256, 256]
@@ -68,6 +72,7 @@ target = [dict(
 metric = MeanAveragePrecision(iou_type='segm')
 metric.update(preds, target)
 from pprint import pprint
+
 #     pprint()
 metric = metric.compute()
 pprint(metric)

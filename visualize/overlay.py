@@ -1,18 +1,22 @@
 """绘制每个模型的预测结果到图上
 """
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 import glob
-import cv2
-import seaborn as sns
 import sys
+
+import cv2
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
 sys.path.append("/root/autodl-tmp/viax")
-from src.core import infer_base
-from src.hovernet.misc import viz_utils # , random_colors
-from PIL import Image
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
+from PIL import Image
+
+from src.core import infer_base
+from src.hovernet.misc import viz_utils  # , random_colors
+
 
 def add_legend(inst_rng_colors):
     """inst_rng_colors 为 0,1 之间的值

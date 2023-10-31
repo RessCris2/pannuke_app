@@ -14,33 +14,31 @@ import pathlib
 import pickle
 import re
 import sys
+import time
 import warnings
-from concurrent.futures import FIRST_EXCEPTION, ProcessPoolExecutor, as_completed, wait
+from concurrent.futures import (FIRST_EXCEPTION, ProcessPoolExecutor,
+                                as_completed, wait)
 from functools import reduce
 from importlib import import_module
 from multiprocessing import Lock, Pool
-import sys
-from src.core.utils import load_img, rm_n_mkdir, get_curtime, find_files
+
 import cv2
-import time
 import numpy as np
 import psutil
 import scipy.io as sio
 import torch
 import torch.utils.data as data
 import tqdm
-from src.hovernet.dataloader.infer_loader import SerializeArray, SerializeFileList
-from src.hovernet.misc.utils import (
-    color_deconvolution,
-    cropping_center,
-    get_bounding_box,
-    log_debug,
-    log_info,
-    rm_n_mkdir,
-)
-from src.hovernet.misc.viz_utils import colorize, visualize_instances_dict
 from skimage import color
+
 import src.hovernet.infer.base as base
+from src.core.utils import find_files, get_curtime, load_img, rm_n_mkdir
+from src.hovernet.dataloader.infer_loader import (SerializeArray,
+                                                  SerializeFileList)
+from src.hovernet.misc.utils import (color_deconvolution, cropping_center,
+                                     get_bounding_box, log_debug, log_info,
+                                     rm_n_mkdir)
+from src.hovernet.misc.viz_utils import colorize, visualize_instances_dict
 
 
 ####

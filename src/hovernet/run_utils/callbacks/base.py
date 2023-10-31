@@ -1,14 +1,14 @@
-import operator
 import json
+import operator
 
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
-
-from src.hovernet.misc.utils import center_pad_to_shape, cropping_center
 from scipy.stats import mode as major_value
 from sklearn.metrics import confusion_matrix
+
+from src.hovernet.misc.utils import center_pad_to_shape, cropping_center
 
 
 ####

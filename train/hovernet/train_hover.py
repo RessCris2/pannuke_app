@@ -14,10 +14,12 @@ Options:
   --view=<dset>   Visualise images after augmentation. Choose 'train' or 'valid'.
 """
 import os
+
 os.environ["KMP_DUPLICATE_LIB_OK"]  =  "TRUE"
 import random
 
 import cv2
+
 cv2.setNumThreads(0)
 import argparse
 import glob
@@ -25,6 +27,7 @@ import importlib
 import inspect
 import json
 import shutil
+
 import numpy as np
 import torch
 from docopt import docopt
@@ -34,17 +37,19 @@ from torch.utils.data import DataLoader
 
 torch.cuda.empty_cache()
 
+import sys
+import time
+
 import cv2
 # from dataset import get_dataset
 import torch.optim as optim
-import sys
-import time
-import sys
+
 # file_path = os.path.abspath(__file__)
 # dir_path = os.path.dirname(os.path.dirname(file_path))
 sys.path.append('/root/autodl-tmp/viax')
-from src.hovernet.run_train import TrainManager
 import wandb
+
+from src.hovernet.run_train import TrainManager
 
 # def main():
 #     wandb.init(project='consep_hover')

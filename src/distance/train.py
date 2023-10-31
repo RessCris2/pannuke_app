@@ -1,32 +1,33 @@
 """
   训练 UNetDIST 模型
 """
-import time
-import os
-import torch
-from torch import nn
-from torch.utils.data import DataLoader
-from  os.path import join as opj
-import sys
-from tqdm import tqdm
-import numpy as np
-import scipy.io as sio
 import logging
-
-# relative import
-from .dist_net import DIST, loss_fn
-from .dataloader import DISTDataset
-from .predict import predict
-from ..core.utils import get_logger, rm_n_mkdir, loads_model, load_img, find_files, get_curtime
-
+import os
 ############## TENSORBOARD ########################
 import sys
+import time
+from os.path import join as opj
+
+import matplotlib.pyplot as plt
+import numpy as np
+import scipy.io as sio
+import torch
 import torch.nn.functional as F
 import torchvision
-import matplotlib.pyplot as plt
-from torch.utils.tensorboard import SummaryWriter
 import wandb
+from torch import nn
 from torch.cuda.amp import autocast
+from torch.utils.data import DataLoader
+from torch.utils.tensorboard import SummaryWriter
+from tqdm import tqdm
+
+from ..core.utils import (find_files, get_curtime, get_logger, load_img,
+                          loads_model, rm_n_mkdir)
+from .dataloader import DISTDataset
+# relative import
+from .dist_net import DIST, loss_fn
+from .predict import predict
+
 # default `log_dir` is "runs" - we'll be more specific here
 # import sys
 # sys.path.append("/root/autodl-tmp/archive/v2/metrics")
