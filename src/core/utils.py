@@ -134,7 +134,7 @@ def find_files(path, ext, exs=None):
             exs = np.load(exs, allow_pickle=True)
             for ex in exs:
                 try:
-                    # 尝试移除，如果不存在，就跳过
+                    # attempt to remove, if not present, skip
                     file_list.remove(ex)
                 except Exception:
                     continue
@@ -241,20 +241,17 @@ def fetch_inst_centroid_maskrcnn(pred_masks):
 
 
 def transfer_inst_format(true_inst, true_type_map):
-    """将 inst [256, 256]
-    转换为
-    dict(
-    scores:
-    labels:
-    bboxes:
-    masks: (N, 256, 256)
-    )
-    的格式
+    """
+    params:
+        true_inst: 2D image with instance_id, one instance_id means one object.
+        true_type_map: 2D images with type_id, one type_id means one specific type.
 
-    如果传入 true_type_map: 也就是 type_map 的结果, 则进一步转化 labels
+    returns:
+        true: dict, contains keys ['bboxes', 'scores', 'masks', 'lables', 'centroids' ]
+            where labels means category types.
+
     """
     true = {}
-    # true_inst_id = np.unique(true_inst)[1:]
     true_inst_id = list(np.unique(true_inst))
     if 0 in true_inst_id:
         true_inst_id.remove(0)
@@ -274,7 +271,7 @@ def transfer_inst_format(true_inst, true_type_map):
     true_scores = np.array([0.99] * len(true_inst_id))
     # fake one!
     if true_type_map is None:
-        true_labels = np.array([1] * len(true_inst_id))  # 这部分要处理
+        true_labels = np.array([1] * len(true_inst_id))  # TODO 这部分要处理
     else:
         true_labels = (
             np.array(
@@ -284,7 +281,7 @@ def transfer_inst_format(true_inst, true_type_map):
                 ]
             )
             - 1
-        )  # 对 type_map取值，待测试; 有很大bug的样子
+        )  # TODO 对 type_map取值，待测试; 有很大bug的样子
 
     true_centroids = fetch_inst_centroid_maskrcnn(true_masks)
 
@@ -297,7 +294,7 @@ def transfer_inst_format(true_inst, true_type_map):
 
 
 def load_gt(img_path, is_class=True):
-    """获取相应 img_path 的 gt 标签"""
+    """obtain corresponding img_gt for img_path"""
     type_mask = load_img(img_path.replace("images", "seg_mask").replace("jpg", "png"))
     inst_mask = load_img(img_path.replace("images", "inst").replace("jpg", "npy"))
     if is_class:
