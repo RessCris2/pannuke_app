@@ -3,25 +3,20 @@ import glob
 import os
 import re
 import sys
-from src.core.utils import rm_n_mkdir, load_img
+
 import cv2
+import imgaug as ia
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.io as sio
 import torch.utils.data
-
-import imgaug as ia
 from imgaug import augmenters as iaa
-from ..misc.utils import cropping_center
 
-from .augs import (
-    add_to_brightness,
-    add_to_contrast,
-    add_to_hue,
-    add_to_saturation,
-    gaussian_blur,
-    median_blur,
-)
+from src.core.utils import load_img, rm_n_mkdir
+
+from ..misc.utils import cropping_center
+from .augs import (add_to_brightness, add_to_contrast, add_to_hue,
+                   add_to_saturation, gaussian_blur, median_blur)
 
 
 ####

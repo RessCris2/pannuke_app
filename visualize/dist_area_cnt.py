@@ -1,11 +1,13 @@
-from scipy.spatial.distance import cdist
-import numpy as np
-import pathlib
-import pandas as pd
-import matplotlib.pyplot as plt
 import glob
+import pathlib
+
 import cv2
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import seaborn as sns
+from scipy.spatial.distance import cdist
+
 
 def find_edge(per_inst):
     contours, hierarchy = cv2.findContours(per_inst.astype('uint8'),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)

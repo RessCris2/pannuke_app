@@ -1,20 +1,25 @@
 """测试加了 aug 之后的数据变换, 先用正常的 run 跑起来，然后用 sweep 调参
 """
 import os
+
 os.environ['WANDB_MODE'] = 'offline'
-from argparse import Namespace
 import sys
+from argparse import Namespace
+
 file_path = os.path.abspath(__file__)
 dir_path = os.path.dirname(os.path.dirname(file_path))
 sys.path.append(dir_path)
 
-import torch
-from src.seg_unet.train_with_aug import train_profiler as train
-from src.core.utils import get_curtime
 import time
-from torch.cuda.amp import autocast
-import wandb 
 import warnings
+
+import torch
+import wandb
+from torch.cuda.amp import autocast
+
+from src.core.utils import get_curtime
+from src.seg_unet.train_with_aug import train_profiler as train
+
 warnings.filterwarnings('ignore')
 
 

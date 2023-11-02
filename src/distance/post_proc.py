@@ -28,7 +28,6 @@ def h_reconstruction_erosion(prob_img, h):
     """
         Performs a H minimma reconstruction via an erosion method.
     """
-
     def making_top_mask(x, lamb=h):
        return min(255, x + lamb)
 
@@ -37,8 +36,7 @@ def h_reconstruction_erosion(prob_img, h):
 
     seed = shift_prob_img
     mask = prob_img
-    recons = reconstruction(
-        seed, mask, method='erosion').astype(np.dtype('ubyte'))
+    recons = reconstruction( seed, mask, method='erosion').astype(np.dtype('ubyte'))
     return recons
 
 
@@ -115,11 +113,11 @@ def dynamic_watershed_alias(p_img, lamb, p_thresh = 0.5, mode='dist'):
     return ar_label
 
 
-def post_process(prob_image, param=7, thresh = 0.5, mode='dist'):
+def post_process(prob_image, param=7, thresh = 0.5):
     """
-    Perform dynamic_watershed_alias with some default parameters.
+        Perform dynamic_watershed_alias with some default parameters.
     """
-    segmentation_mask = dynamic_watershed_alias(prob_image, param, thresh, mode='dist')
+    segmentation_mask = dynamic_watershed_alias(prob_image, param, thresh)
     return segmentation_mask
 
 

@@ -1,20 +1,22 @@
-import numpy as np
+import glob
 import os
+import sys
+
 import cv2
+import numpy as np
+import segmentation_models_pytorch as smp
 import torch
 import torch.nn as nn
 import torchvision
-from torch.utils.data import DataLoader
-from torch.utils.data import Dataset as BaseDataset
-import glob
-
-import segmentation_models_pytorch as smp
+from post_proc import post_process
 from segmentation_models_pytorch.utils.losses import DiceLoss
 from segmentation_models_pytorch.utils.metrics import IoU
-from post_proc import post_process
-import sys
+from torch.utils.data import DataLoader
+from torch.utils.data import Dataset as BaseDataset
+
 sys.path.append("/root/autodl-tmp/archive")
 from metrics.compute_inst import run_one_inst_stat
+
 
 # model = torch.load(path,  map_location='cpu')
 def predict(model_path, img_path):

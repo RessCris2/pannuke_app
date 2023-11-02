@@ -14,10 +14,12 @@ Options:
   --view=<dset>   Visualise images after augmentation. Choose 'train' or 'valid'.
 """
 import os
+
 os.environ["KMP_DUPLICATE_LIB_OK"]  =  "TRUE"
 
 
 import cv2
+
 cv2.setNumThreads(0)
 import argparse
 import glob
@@ -25,43 +27,40 @@ import importlib
 import inspect
 import json
 import shutil
+
 import numpy as np
 import torch
 from docopt import docopt
 from tensorboardX import SummaryWriter
 from torch.nn import DataParallel  # TODO: switch to DistributedDataParallel
 from torch.utils.data import DataLoader
+
 torch.cuda.empty_cache()
 import random
-import torch.optim as optim
 import sys
 import time
 
-from src.hovernet.dataloader.train_loader import FileLoader
-from src.hovernet.run_utils.engine import RunEngine
-from src.hovernet.run_utils.utils import (
-    check_log_dir,
-    check_manual_seed,
-    colored,
-    convert_pytorch_checkpoint,
-)
-from src.hovernet.run_utils.callbacks.base import (
-    AccumulateRawOutput,
-    PeriodicSaver,
-    ProcessAccumulatedRawOutput,
-    ScalarMovingAverage,
-    ScheduleLr,
-    TrackLr,
-    VisualizeOutput,
-    TriggerEngine,
-)
-from src.hovernet.run_utils.callbacks.logging import LoggingEpochOutput, LoggingGradient
-from src.hovernet.run_utils.engine import Events
-from src.hovernet.models_desc.targets import gen_targets, prep_sample
-from src.hovernet.models_desc.net_desc import create_model
-from src.hovernet.models_desc.run_desc import proc_valid_step_output, train_step, valid_step, viz_step_output
-from src.core.utils import rm_n_mkdir
+import torch.optim as optim
 
+from src.core.utils import rm_n_mkdir
+from src.hovernet.dataloader.train_loader import FileLoader
+from src.hovernet.models_desc.net_desc import create_model
+from src.hovernet.models_desc.run_desc import (proc_valid_step_output,
+                                               train_step, valid_step,
+                                               viz_step_output)
+from src.hovernet.models_desc.targets import gen_targets, prep_sample
+from src.hovernet.run_utils.callbacks.base import (AccumulateRawOutput,
+                                                   PeriodicSaver,
+                                                   ProcessAccumulatedRawOutput,
+                                                   ScalarMovingAverage,
+                                                   ScheduleLr, TrackLr,
+                                                   TriggerEngine,
+                                                   VisualizeOutput)
+from src.hovernet.run_utils.callbacks.logging import (LoggingEpochOutput,
+                                                      LoggingGradient)
+from src.hovernet.run_utils.engine import Events, RunEngine
+from src.hovernet.run_utils.utils import (check_log_dir, check_manual_seed,
+                                          colored, convert_pytorch_checkpoint)
 
 
 def get_config(config, nr_type, mode, pretrained):

@@ -10,6 +10,7 @@ from .net_utils import (DenseBlock, Net, ResidualBlock, TFSamepaddingLayer,
                         UpSample2x)
 from .utils import crop_op, crop_to_shape
 
+
 ####
 class HoVerNet(Net):
     """Initialize HoVer-Net."""

@@ -1,31 +1,31 @@
 # -*- coding:utf-8 -*-
 import importlib
 import random
+import sys
+
 import cv2
 import numpy as np
+import torch.optim as optim
+
 # from dataset import get_dataset
 
-import torch.optim as optim
-import sys
 sys.path.append("/root/autodl-tmp/archive/v2/models/hovernet/")
 import time
-from run_utils.callbacks.base import (
-    AccumulateRawOutput,
-    PeriodicSaver,
-    ProcessAccumulatedRawOutput,
-    ScalarMovingAverage,
-    ScheduleLr,
-    TrackLr,
-    VisualizeOutput,
-    TriggerEngine,
-)
+
+from models.net_desc import create_model
+from models.run_desc import (proc_valid_step_output, train_step, valid_step,
+                             viz_step_output)
+from models.targets import gen_targets, prep_sample
+from run_utils.callbacks.base import (AccumulateRawOutput, PeriodicSaver,
+                                      ProcessAccumulatedRawOutput,
+                                      ScalarMovingAverage, ScheduleLr, TrackLr,
+                                      TriggerEngine, VisualizeOutput)
 from run_utils.callbacks.logging import LoggingEpochOutput, LoggingGradient
 from run_utils.engine import Events
-from models.targets import gen_targets, prep_sample
-from models.net_desc import create_model
-from models.run_desc import proc_valid_step_output, train_step, valid_step, viz_step_output
+
 sys.path.append("/root/autodl-tmp/archive/metrics/")
 from utils import rm_n_mkdir
+
 
 def get_config(nr_type, mode):
     """
