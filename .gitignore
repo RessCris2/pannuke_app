@@ -5,9 +5,9 @@ datasets/
 .ipynb_checkpoints/
 **/.ipynb_checkpoints
 *.zip
-*.npy
 *.tar
-*.csv
+# *.csv
+visualize/**.npy
 
 
 # Byte-compiled / optimized / DLL files
@@ -43,7 +43,7 @@ MANIFEST
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
-
+.vscode
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
@@ -170,3 +170,4 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+visualize/pred.npy

@@ -1,55 +1,42 @@
-import sys
-import warnings
-
-import cv2
-import matplotlib.pyplot as plt
 import numpy as np
 import scipy
 import torch
 from scipy.optimize import linear_sum_assignment
-
-sys.path.append("/root/autodl-tmp/archive/core/metrics")
-from utils import find_files, get_bounding_box, load_img, rm_n_mkdir
+from tqdm import tqdm
+from .utils import fn_time
 
 torch.cuda.empty_cache()
-from tqdm import tqdm
-from utils import fn_time
 
 
 # --------------------------Optimised for Speed
 def get_fast_aji(true_id_list, true_masks, pred_id_list, pred_masks):
-    """AJI version distributed by MoNuSeg, has no permutation problem but suffered from 
+    """AJI version distributed by MoNuSeg, has no permutation problem but suffered from
     over-penalisation similar to DICE2.
 
-    Fast computation requires instance IDs are in contiguous orderding i.e [1, 2, 3, 4] 
-    not [2, 3, 6, 10]. Please call `remap_label` before hand and `by_size` flag has no 
+    Fast computation requires instance IDs are in contiguous orderding i.e [1, 2, 3, 4]
+    not [2, 3, 6, 10]. Please call `remap_label` before hand and `by_size` flag has no
     effect on the result.
 
     """
     # prefill with value
     # 假如这个地方， true_id_list , pred_id_list 都不包含 0，背景
-    pairwise_inter = np.zeros(
-        [len(true_id_list) , len(pred_id_list) ], dtype=np.float64
-    )
-    pairwise_union = np.zeros(
-        [len(true_id_list) , len(pred_id_list) ], dtype=np.float64
-    )
+    pairwise_inter = np.zeros([len(true_id_list), len(pred_id_list)], dtype=np.float64)
+    pairwise_union = np.zeros([len(true_id_list), len(pred_id_list)], dtype=np.float64)
 
     for true_id in true_id_list:  # 0-th is background
         t_mask = true_masks[true_id]
         for pred_id in pred_id_list:
             p_mask = pred_masks[pred_id]
-            
-            if np.sum(p_mask[t_mask > 0]) ==0: # 判断是否有重合，没有就go on
-                continue 
+
+            if np.sum(p_mask[t_mask > 0]) == 0:  # 判断是否有重合，没有就go on
+                continue
             # if pred_id == 0:  # ignore
             #     continue  # overlaping background
-            
+
             total = (t_mask + p_mask).sum()
             inter = (t_mask * p_mask).sum()
-            pairwise_inter[true_id , pred_id ] = inter
-            pairwise_union[true_id , pred_id ] = total - inter
-      
+            pairwise_inter[true_id, pred_id] = inter
+            pairwise_union[true_id, pred_id] = total - inter
 
     pairwise_iou = pairwise_inter / (pairwise_union + 1.0e-6)
     # pair of pred that give highest iou for each true, don't care
@@ -66,12 +53,8 @@ def get_fast_aji(true_id_list, true_masks, pred_id_list, pred_masks):
     paired_true = list(paired_true)  # index to instance ID
     paired_pred = list(paired_pred)
     # add all unpaired GT and Prediction into the union
-    unpaired_true = np.array(
-        [idx for idx in true_id_list if idx not in paired_true]
-    )
-    unpaired_pred = np.array(
-        [idx for idx in pred_id_list if idx not in paired_pred]
-    )
+    unpaired_true = np.array([idx for idx in true_id_list if idx not in paired_true])
+    unpaired_pred = np.array([idx for idx in pred_id_list if idx not in paired_pred])
     for true_id in unpaired_true:
         overall_union += true_masks[true_id].sum()
     for pred_id in unpaired_pred:
@@ -88,64 +71,57 @@ def get_fast_aji(true_id_list, true_masks, pred_id_list, pred_masks):
 #####
 def get_fast_aji_plus(true_id_list, true_masks, pred_id_list, pred_masks):
     """AJI+, an AJI version with maximal unique pairing to obtain overall intersecion.
-    Every prediction instance is paired with at most 1 GT instance (1 to 1) mapping, unlike AJI 
-    where a prediction instance can be paired against many GT instances (1 to many).
+    Every prediction instance is paired with at most 1 GT instance (1 to 1) mapping,
+    unlike AJI where a prediction instance can be paired against many GT instances
+    (1 to many).
     Remaining unpaired GT and Prediction instances will be added to the overall union.
     The 1 to 1 mapping prevents AJI's over-penalisation from happening.
 
-    Fast computation requires instance IDs are in contiguous orderding i.e [1, 2, 3, 4] 
-    not [2, 3, 6, 10]. Please call `remap_label` before hand and `by_size` flag has no 
+    Fast computation requires instance IDs are in contiguous orderding i.e [1, 2, 3, 4]
+    not [2, 3, 6, 10]. Please call `remap_label` before hand and `by_size` flag has no
     effect on the result.
 
     """
     # prefill with value
-    pairwise_inter = np.zeros(
-        [len(true_id_list) , len(pred_id_list) ], dtype=np.float64
-    )
-    pairwise_union = np.zeros(
-        [len(true_id_list) , len(pred_id_list) ], dtype=np.float64
-    )
+    pairwise_inter = np.zeros([len(true_id_list), len(pred_id_list)], dtype=np.float64)
+    pairwise_union = np.zeros([len(true_id_list), len(pred_id_list)], dtype=np.float64)
 
     # caching pairwise
     for true_id in true_id_list:  # 0-th is background
         t_mask = true_masks[true_id]
-#         pred_true_overlap = pred[t_mask > 0]
-#         pred_true_overlap_id = np.unique(pred_true_overlap)
-#         pred_true_overlap_id = list(pred_true_overlap_id)
+        #         pred_true_overlap = pred[t_mask > 0]
+        #         pred_true_overlap_id = np.unique(pred_true_overlap)
+        #         pred_true_overlap_id = list(pred_true_overlap_id)
         for pred_id in pred_id_list:
             p_mask = pred_masks[pred_id]
-            
-            if np.sum(p_mask[t_mask > 0]) ==0: # 判断是否有重合，没有就go on
-                continue 
+
+            if np.sum(p_mask[t_mask > 0]) == 0:  # 判断是否有重合，没有就go on
+                continue
             # if pred_id == 0:  # ignore
             #     continue  # overlaping background
-            
+
             total = (t_mask + p_mask).sum()
             inter = (t_mask * p_mask).sum()
-            pairwise_inter[true_id , pred_id ] = inter
-            pairwise_union[true_id , pred_id ] = total - inter
+            pairwise_inter[true_id, pred_id] = inter
+            pairwise_union[true_id, pred_id] = total - inter
     #
     pairwise_iou = pairwise_inter / (pairwise_union + 1.0e-6)
-    #### Munkres pairing to find maximal unique pairing
+    # Munkres pairing to find maximal unique pairing
     paired_true, paired_pred = linear_sum_assignment(-pairwise_iou)
-    ### extract the paired cost and remove invalid pair
+    # extract the paired cost and remove invalid pair
     paired_iou = pairwise_iou[paired_true, paired_pred]
     # now select all those paired with iou != 0.0 i.e have intersection
     paired_true = paired_true[paired_iou > 0.0]
     paired_pred = paired_pred[paired_iou > 0.0]
     paired_inter = pairwise_inter[paired_true, paired_pred]
     paired_union = pairwise_union[paired_true, paired_pred]
-    paired_true = list(paired_true )  # index to instance ID
-    paired_pred = list(paired_pred )
+    paired_true = list(paired_true)  # index to instance ID
+    paired_pred = list(paired_pred)
     overall_inter = paired_inter.sum()
     overall_union = paired_union.sum()
     # add all unpaired GT and Prediction into the union
-    unpaired_true = np.array(
-        [idx for idx in true_id_list if idx not in paired_true]
-    )
-    unpaired_pred = np.array(
-        [idx for idx in pred_id_list if idx not in paired_pred]
-    )
+    unpaired_true = np.array([idx for idx in true_id_list if idx not in paired_true])
+    unpaired_pred = np.array([idx for idx in pred_id_list if idx not in paired_pred])
     for true_id in unpaired_true:
         overall_union += true_masks[true_id].sum()
     for pred_id in unpaired_pred:
@@ -159,41 +135,39 @@ def get_fast_aji_plus(true_id_list, true_masks, pred_id_list, pred_masks):
 def get_fast_pq(true_id_list, true_masks, pred_id_list, pred_masks, match_iou=0.5):
     """`match_iou` is the IoU threshold level to determine the pairing between
     GT instances `p` and prediction instances `g`. `p` and `g` is a pair
-    if IoU > `match_iou`. However, pair of `p` and `g` must be unique 
+    if IoU > `match_iou`. However, pair of `p` and `g` must be unique
     (1 prediction instance to 1 GT instance mapping).
 
     If `match_iou` < 0.5, Munkres assignment (solving minimum weight matching
-    in bipartite graphs) is caculated to find the maximal amount of unique pairing. 
+    in bipartite graphs) is caculated to find the maximal amount of unique pairing.
 
     If `match_iou` >= 0.5, all IoU(p,g) > 0.5 pairing is proven to be unique and
-    the number of pairs is also maximal.    
-    
-    Fast computation requires instance IDs are in contiguous orderding 
-    i.e [1, 2, 3, 4] not [2, 3, 6, 10]. Please call `remap_label` beforehand 
+    the number of pairs is also maximal.
+
+    Fast computation requires instance IDs are in contiguous orderding
+    i.e [1, 2, 3, 4] not [2, 3, 6, 10]. Please call `remap_label` beforehand
     and `by_size` flag has no effect on the result.
 
     Returns:
         [dq, sq, pq]: measurement statistic
 
-        [paired_true, paired_pred, unpaired_true, unpaired_pred]: 
+        [paired_true, paired_pred, unpaired_true, unpaired_pred]:
                       pairing information to perform measurement
-                    
+
     """
     assert match_iou >= 0.0, "Cant' be negative"
     # prefill with value
-    pairwise_iou = np.zeros(
-        [len(true_id_list) , len(pred_id_list) ], dtype=np.float64
-    )
+    pairwise_iou = np.zeros([len(true_id_list), len(pred_id_list)], dtype=np.float64)
 
     # caching pairwise iou
     for true_id in true_id_list:  # 0-th is background
         t_mask = true_masks[true_id]
         for pred_id in pred_id_list:
             p_mask = pred_masks[pred_id]
-            
-            if np.sum(p_mask[t_mask > 0]) ==0: # 判断是否有重合，没有就go on
-                continue 
-        
+
+            if np.sum(p_mask[t_mask > 0]) == 0:  # 判断是否有重合，没有就go on
+                continue
+
             total = (t_mask + p_mask).sum()
             inter = (t_mask * p_mask).sum()
 
@@ -208,19 +182,19 @@ def get_fast_pq(true_id_list, true_masks, pred_id_list, pred_masks, match_iou=0.
         paired_true += 1  # index is instance id - 1
         paired_pred += 1  # hence return back to original
     else:  # * Exhaustive maximal unique pairing
-        #### Munkres pairing with scipy library
+        # Munkres pairing with scipy library
         # the algorithm return (row indices, matched column indices)
         # if there is multiple same cost in a row, index of first occurence
         # is return, thus the unique pairing is ensure
         # inverse pair to get high IoU as minimum
         paired_true, paired_pred = linear_sum_assignment(-pairwise_iou)
-        ### extract the paired cost and remove invalid pair
+        # extract the paired cost and remove invalid pair
         paired_iou = pairwise_iou[paired_true, paired_pred]
 
         # now select those above threshold level
         # paired with iou = 0.0 i.e no intersection => FP or FN
-        paired_true = list(paired_true[paired_iou > match_iou] )
-        paired_pred = list(paired_pred[paired_iou > match_iou] )
+        paired_true = list(paired_true[paired_iou > match_iou])
+        paired_pred = list(paired_pred[paired_iou > match_iou])
         paired_iou = paired_iou[paired_iou > match_iou]
 
     # get the actual FP and FN
@@ -238,14 +212,15 @@ def get_fast_pq(true_id_list, true_masks, pred_id_list, pred_masks, match_iou=0.
         # get the SQ, no paired has 0 iou so not impact
         sq = paired_iou.sum() / (tp + 1.0e-6)
 
-        # return [dq, sq, dq * sq], [paired_true, paired_pred, unpaired_true, unpaired_pred]
+        # return [dq, sq, dq * sq], [paired_true, paired_pred, unpaired_true,
+        # unpaired_pred]
         return [dq, sq, dq * sq]
-    except:
-        print("dq,sq, pq something wrong!")
+    except Exception as e:
+        print("dq,sq, pq something wrong!", e)
         # return [0, 0, 0]
         raise ValueError
 
-#####
+
 def get_fast_dice_2(true_id, true_masks, pred_id, pred_masks):
     """Ensemble dice."""
     overall_total = 0
@@ -255,10 +230,10 @@ def get_fast_dice_2(true_id, true_masks, pred_id, pred_masks):
         t_mask = true_masks[true_idx]
         for pred_idx in pred_id:
             p_mask = pred_masks[pred_idx]
-            
-            if np.sum(p_mask[t_mask > 0]) ==0: # 判断是否有重合，没有就go on
-                continue 
-        
+
+            if np.sum(p_mask[t_mask > 0]) == 0:  # 判断是否有重合，没有就go on
+                continue
+
             # print(true_idx, pred_idx)
             total = (t_mask + p_mask).sum()
             inter = (t_mask * p_mask).sum()
@@ -287,8 +262,8 @@ def get_dice_2(true_id, true_masks, pred_id, pred_masks):
 
 #####
 def remap_label(pred, by_size=False):
-    """Rename all instance id so that the id is contiguous i.e [0, 1, 2, 3] 
-    not [0, 2, 4, 6]. The ordering of instances (which one comes first) 
+    """Rename all instance id so that the id is contiguous i.e [0, 1, 2, 3]
+    not [0, 2, 4, 6]. The ordering of instances (which one comes first)
     is preserved unless by_size=True, then the instances will be reordered
     so that bigger nucler has smaller ID.
 
@@ -320,14 +295,14 @@ def remap_label(pred, by_size=False):
 
 #####
 def pair_coordinates(setA, setB, radius):
-    """Use the Munkres or Kuhn-Munkres algorithm to find the most optimal 
-    unique pairing (largest possible match) when pairing points in set B 
+    """Use the Munkres or Kuhn-Munkres algorithm to find the most optimal
+    unique pairing (largest possible match) when pairing points in set B
     against points in set A, using distance as cost function.
 
     Args:
         setA, setB: np.array (float32) of size Nx2 contains the of XY coordinate
-                    of N different points 
-        radius: valid area around a point in setA to consider 
+                    of N different points
+        radius: valid area around a point in setA to consider
                 a given coordinate in setB a candidate for match
     Return:
         pairing: pairing is an array of indices
@@ -337,32 +312,33 @@ def pair_coordinates(setA, setB, radius):
 
     """
     # * Euclidean distance as the cost matrix
-    pair_distance = scipy.spatial.distance.cdist(setA, setB, metric='euclidean')
+    pair_distance = scipy.spatial.distance.cdist(setA, setB, metric="euclidean")
 
     # * Munkres pairing with scipy library
     # the algorithm return (row indices, matched column indices)
-    # if there is multiple same cost in a row, index of first occurence 
+    # if there is multiple same cost in a row, index of first occurence
     # is return, thus the unique pairing is ensured
     indicesA, paired_indicesB = linear_sum_assignment(pair_distance)
 
-    # extract the paired cost and remove instances 
+    # extract the paired cost and remove instances
     # outside of designated radius
     pair_cost = pair_distance[indicesA, paired_indicesB]
 
     pairedA = indicesA[pair_cost <= radius]
     pairedB = paired_indicesB[pair_cost <= radius]
 
-    pairing = np.concatenate([pairedA[:,None], pairedB[:,None]], axis=-1)
+    pairing = np.concatenate([pairedA[:, None], pairedB[:, None]], axis=-1)
     unpairedA = np.delete(np.arange(setA.shape[0]), pairedA)
     unpairedB = np.delete(np.arange(setB.shape[0]), pairedB)
     return pairing, unpairedA, unpairedB
+
 
 @fn_time
 def run_nuclei_type_stat(preds, trues, type_uid_list):
     """GT must be exhaustively annotated for instance location (detection).
 
     Args:
-        true_dir, pred_dir: Directory contains .mat annotation for each image. 
+        true_dir, pred_dir: Directory contains .mat annotation for each image.
                             Each .mat must contain:
                     --`inst_centroid`: Nx2, contains N instance centroid
                                        of mass coordinates (X, Y)
@@ -373,7 +349,7 @@ def run_nuclei_type_stat(preds, trues, type_uid_list):
                         Default to `None` means available nuclei type in GT.
         exhaustive : Flag to indicate whether GT is exhaustively labelled
                      for instance types
-                     
+
     """
     # 首先， paired_all ,...all 都是针对所有图片来说的
     # true_inst_type_all, pred_inst_type_all , 每个图片有不同的inst_id 表示为不同的inst，但是新图片会从头开始。
@@ -388,9 +364,9 @@ def run_nuclei_type_stat(preds, trues, type_uid_list):
     print("========开始对图片计算overall分类效果========")
     for file_idx in tqdm(range(length)):
         true_centroid = (trues[file_idx]["centroids"]).astype("float32")
-        true_inst_type = trues[file_idx]['labels'][:, None]
+        true_inst_type = trues[file_idx]["labels"][:, None]
         pred_centroid = (preds[file_idx]["centroids"]).astype("float32")
-        pred_inst_type = preds[file_idx]['labels'][:, None]
+        pred_inst_type = preds[file_idx]["labels"][:, None]
 
         if true_centroid.shape[0] != 0:
             true_inst_type = true_inst_type[:, 0]
@@ -435,14 +411,13 @@ def run_nuclei_type_stat(preds, trues, type_uid_list):
     unpaired_true_all = np.concatenate(unpaired_true_all, axis=0)
     unpaired_pred_all = np.concatenate(unpaired_pred_all, axis=0)
 
-    ## 是指的是所有的true_inst_type 么？
+    # TODO 是指的是所有的true_inst_type 么？
     true_inst_type_all = np.concatenate(true_inst_type_all, axis=0)
     pred_inst_type_all = np.concatenate(pred_inst_type_all, axis=0)
 
     paired_true_type = true_inst_type_all[paired_all[:, 0]]
     paired_pred_type = pred_inst_type_all[paired_all[:, 1]]
 
-    
     unpaired_true_type = true_inst_type_all[unpaired_true_all]
     unpaired_pred_type = pred_inst_type_all[unpaired_pred_all]
 
@@ -466,7 +441,8 @@ def run_nuclei_type_stat(preds, trues, type_uid_list):
             + w[0] * fp_dt
             + w[1] * fn_dt
             + w[2] * fp_d
-            + w[3] * fn_d + 1e-6
+            + w[3] * fn_d
+            + 1e-6
         )
         return f1_type
 
@@ -488,7 +464,7 @@ def run_nuclei_type_stat(preds, trues, type_uid_list):
     if type_uid_list is None:
         type_uid_list = np.unique(true_inst_type_all).tolist()
 
-    results_list = [ acc_type, f1_d]
+    results_list = [acc_type, f1_d]
     for type_uid in type_uid_list:
         # print("type_uid: ---", type_uid)
         f1_type = _f1_type(
@@ -505,38 +481,45 @@ def run_nuclei_type_stat(preds, trues, type_uid_list):
     # print(np.array(results_list))
     return results_list
 
-def eveluate_one_pic_class(true_centroid, pred_centroid, true_inst_type, pred_inst_type):
-    """
-      输入具体的数值计算;
-      借用hover 的代码, 
-      true, pred 都是 mat格式, 有 inst_centroid, inst_type 等key
 
-      单张图片只计算 acc, f1; overall 再计算 confusion matrix, precision, recall
+def eveluate_one_pic_class(
+    true_centroid, pred_centroid, true_inst_type, pred_inst_type
+):
+    """
+    输入具体的数值计算;
+    借用hover 的代码,
+    true, pred 都是 mat格式, 有 inst_centroid, inst_type 等key
+
+    单张图片只计算 acc, f1; overall 再计算 confusion matrix, precision, recall
     """
     paired, unpaired_true, unpaired_pred = pair_coordinates(
-            true_centroid, pred_centroid, 12)
+        true_centroid, pred_centroid, 12
+    )
     paired_pred_type = pred_inst_type[paired[:, 1]]
     paired_true_type = true_inst_type[paired[:, 0]]
-    
+
     unpaired_pred_type = pred_inst_type[unpaired_pred]
     unpaired_true_type = true_inst_type[unpaired_true]
-    
+
     w = [1, 1]
     tp_d = paired_pred_type.shape[0]
     fp_d = unpaired_pred_type.shape[0]
     fn_d = unpaired_true_type.shape[0]
     tp_tn_dt = (paired_pred_type == paired_true_type).sum()
     fp_fn_dt = (paired_pred_type != paired_true_type).sum()
-    
-    acc = tp_tn_dt / (tp_tn_dt + fp_fn_dt+1e-6) # 只考虑已经匹配的预测情况。预测为True的数据中有多少是正确预测的。实际上是 Precision 值么？
-    f1 = 2 * tp_d / (2 * tp_d + w[0] * fp_d + w[1] * fn_d+1e-6)  # 这个计算的都只是实例匹配层面的结果。
+
+    acc = tp_tn_dt / (
+        tp_tn_dt + fp_fn_dt + 1e-6
+    )  # 只考虑已经匹配的预测情况。预测为True的数据中有多少是正确预测的。实际上是 Precision 值么？
+    f1 = 2 * tp_d / (2 * tp_d + w[0] * fp_d + w[1] * fn_d + 1e-6)  # 这个计算的都只是实例匹配层面的结果。
     return acc, f1
+
 
 # @fn_time
 def eveluate_one_pic_inst(true_masks, pred_masks):
     if isinstance(true_masks, dict):
-        true_masks = true_masks['masks']
-        pred_masks = pred_masks['masks']
+        true_masks = true_masks["masks"]
+        pred_masks = pred_masks["masks"]
     true_id_list = list(range(len(true_masks)))
     pred_id_list = list(range(len(pred_masks)))
     metrics = []
@@ -545,7 +528,7 @@ def eveluate_one_pic_inst(true_masks, pred_masks):
     # dice = get_dice_2(true_id_list, true_masks, pred_id_list, pred_masks)
     dice = get_fast_dice_2(true_id_list, true_masks, pred_id_list, pred_masks)
     pq = get_fast_pq(true_id_list, true_masks, pred_id_list, pred_masks)
-   
+
     metrics.append(dice)
     metrics.append(aji)
     metrics.append(aji_plus)
