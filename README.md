@@ -1,6 +1,6 @@
 # pannuke_app
 
-[![](https://img.shields.io/badge/blog-@champyin-red.svg)](https://champyin.com)
+[![](https://img.shields.io/badge/blog-@csdn-red.svg)](https://blog.csdn.net/weixin_41783424?spm=1011.2124.3001.5343)
 
 Code issues records(To be fixed):
 - 数据的输入部分，各种格式的转换有点混乱，而且很容易出错，不容易校验
