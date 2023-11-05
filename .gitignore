@@ -8,7 +8,8 @@ datasets/
 *.tar
 # *.csv
 visualize/**.npy
-
+wandb/
+model_data/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
