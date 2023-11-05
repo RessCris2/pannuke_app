@@ -11,6 +11,13 @@ from mmengine.logging import print_log
 from mmengine.registry import RUNNERS
 from mmengine.runner import Runner
 
+# current_file_path = os.path.abspath(__file__)
+# first_parent_directory = os.path.dirname(current_file_path)
+# second_parent_directory = os.path.dirname(first_parent_directory)
+# third_parent_directory = os.path.dirname(second_parent_directory)
+# dir_name = os.path.dirname(third_parent_directory)
+# print(dir_name)
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Train a detector")
@@ -59,11 +66,13 @@ def parse_args():
     parser.add_argument("--local_rank", "--local-rank", type=int, default=0)
     # args = parser.parse_args(['/root/autodl-tmp/viax/train/mask_rcnn/consep/consep_config.py',
     #                           '--work-dir', '/root/autodl-tmp/viax/train/model_data/consep/mask_rcnn/'])
+
+    
     args = parser.parse_args(
         [
-            "/home/pannuke_app/train/mask_rcnn/consep/consep_config.py",
+            "/root/autodl-tmp/pannuke_app/train/mask_rcnn/consep/consep_config.py",
             "--work-dir",
-            "/home/pannuke_app/train/mask_rcnn/consep/model_data",
+            "/root/autodl-tmp/pannuke_app/train/mask_rcnn/consep/model_data",
         ]
     )
 

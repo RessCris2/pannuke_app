@@ -1,11 +1,13 @@
+import os
+
 _base_ = [
     # "/root/autodl-tmp/archive/v2/models/mask_rcnn/file/config/mask-rcnn_r50_fpn_1x_coco.py"
-    "/home/pannuke_app/src/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
+    "/root/autodl-tmp/pannuke_app/src/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
 ]
 
 # consep
 dataset_type = "CocoDataset"
-data_root = "/home/pannuke_app/train/datasets/CoNSeP/"
+data_root ="/root/autodl-tmp/pannuke_app/train/datasets/CoNSeP/"
 metainfo = {
     "classes": ("Inflammatory", "Healthy_epithelial", "Epithelial", "Spindle-shaped"),
     "palette": [(120, 120, 60), (20, 120, 160), (72, 100, 60), (111, 67, 60)],
@@ -32,7 +34,7 @@ test_pipeline = [
 ]
 
 train_dataloader = dict(
-    batch_size=1,
+    batch_size=4,
     num_workers=1,
     persistent_workers=True,
     sampler=dict(type="DefaultSampler", shuffle=True),
@@ -49,7 +51,7 @@ train_dataloader = dict(
     ),
 )
 val_dataloader = dict(
-    batch_size=1,
+    batch_size=4,
     num_workers=1,
     persistent_workers=True,
     drop_last=False,
@@ -81,3 +83,5 @@ test_evaluator = val_evaluator
 model = dict(
     roi_head=dict(bbox_head=dict(num_classes=4), mask_head=dict(num_classes=4))
 )
+
+
