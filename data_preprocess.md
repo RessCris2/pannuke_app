@@ -56,6 +56,10 @@ CoNSeP 数据集的原始格式为
 the whole process of preprocessing can be described as this graph.
 ![](./resources/preprocess_pipeline.png)
 
+
+extract_patch
+
+
 # google colab 加载数据集
 因为google drive 只有15G, 还是弃用？
 其实 CoNSeP, MoNuSAC 是ok的。

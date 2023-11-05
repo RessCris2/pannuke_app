@@ -5,3 +5,4 @@ Code issues records(To be fixed):
 - dist net 的 vgg 部分是否可以和 unet+ws 部分进行合并？
 - UNet 的训练部分只用到了语义分割的label， 而后续经过后处理评估却用了实例分割的效果。。。？？？？
     觉得可以直接把 ws 处理后的效果和实例分割的效果计算损失来更新模型
+- 数据集的描述可以参考 COCO 论文, PASCAL VOC 介绍的信息等。
