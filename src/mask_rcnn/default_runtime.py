@@ -6,7 +6,13 @@ default_hooks = dict(
     param_scheduler=dict(type="ParamSchedulerHook"),
     checkpoint=dict(type="CheckpointHook", interval=1),
     sampler_seed=dict(type="DistSamplerSeedHook"),
-    visualization=dict(type="DetVisualizationHook"),
+    # visualization=dict(  # 用户可视化验证和测试结果
+    #     type="DetVisualizationHook",
+    #     draw=True,
+    #     interval=1,
+    #     # test_out_dir="/root/autodl-tmp/pannuke_app/train/mask_rcnn/consep/model_data",
+    #     score_thr=0.05,
+    # ),
 )
 
 env_cfg = dict(
@@ -21,7 +27,10 @@ vis_backends = [
     dict(type="WandbVisBackend"),
 ]
 visualizer = dict(
-    type="DetLocalVisualizer", vis_backends=vis_backends, name="visualizer"
+    type="DetLocalVisualizer",
+    vis_backends=vis_backends,
+    name="visualizer",
+    # save_dir="/root/autodl-tmp/pannuke_app/train/mask_rcnn/consep/model_data",
 )
 
 log_processor = dict(type="LogProcessor", window_size=1, by_epoch=True)
