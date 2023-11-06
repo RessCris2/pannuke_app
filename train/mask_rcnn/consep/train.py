@@ -67,7 +67,6 @@ def parse_args():
     # args = parser.parse_args(['/root/autodl-tmp/viax/train/mask_rcnn/consep/consep_config.py',
     #                           '--work-dir', '/root/autodl-tmp/viax/train/model_data/consep/mask_rcnn/'])
 
-    
     args = parser.parse_args(
         [
             "/root/autodl-tmp/pannuke_app/train/mask_rcnn/consep/consep_config.py",
