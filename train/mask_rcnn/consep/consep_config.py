@@ -1,13 +1,20 @@
-import os
+import platform
+import os.path as osp
 
-_base_ = [
-    # "/root/autodl-tmp/archive/v2/models/mask_rcnn/file/config/mask-rcnn_r50_fpn_1x_coco.py"
-    "/root/autodl-tmp/pannuke_app/src/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
-]
+# from mmengine.config import read_base
+
+if osp.exists("/home/pannuke_app/"):
+    _base_ = ["/home/pannuke_app/src/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"]
+    data_root = "/home/pannuke_app/train/datasets/CoNSeP/"
+else:
+    _base_ = ["/root/autodl-tmp/pannuke_app/src/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"]
+    data_root = "/root/autodl-tmp/pannuke_app/train/datasets/CoNSeP/"
+
 
 # consep
 dataset_type = "CocoDataset"
-data_root ="/root/autodl-tmp/pannuke_app/train/datasets/CoNSeP/"
+# data_root = "/root/autodl-tmp/pannuke_app/train/datasets/CoNSeP/"
+# data_root = "/home/pannuke_app/train/datasets/CoNSeP/"
 metainfo = {
     "classes": ("Inflammatory", "Healthy_epithelial", "Epithelial", "Spindle-shaped"),
     "palette": [(120, 120, 60), (20, 120, 160), (72, 100, 60), (111, 67, 60)],
@@ -83,5 +90,3 @@ test_evaluator = val_evaluator
 model = dict(
     roi_head=dict(bbox_head=dict(num_classes=4), mask_head=dict(num_classes=4))
 )
-
-
