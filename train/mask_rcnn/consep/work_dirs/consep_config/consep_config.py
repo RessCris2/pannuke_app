@@ -235,14 +235,18 @@ val_evaluator = dict(
     '/root/autodl-tmp/pannuke_app/train/datasets/CoNSeP/Test/annotations.json',
     metric=['bbox', 'segm'],
     format_only=False,
-    backend_args=None)
+    backend_args=None,
+    outfile_prefix=
+    '/root/autodl-tmp/pannuke_app/train/mask_rcnn/consep/work_dirs/test')
 test_evaluator = dict(
     type='CocoMetric',
     ann_file=
     '/root/autodl-tmp/pannuke_app/train/datasets/CoNSeP/Test/annotations.json',
     metric=['bbox', 'segm'],
     format_only=False,
-    backend_args=None)
+    backend_args=None,
+    outfile_prefix=
+    '/root/autodl-tmp/pannuke_app/train/mask_rcnn/consep/work_dirs/test')
 train_cfg = dict(type='EpochBasedTrainLoop', max_epochs=100, val_interval=1)
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
@@ -280,5 +284,7 @@ log_processor = dict(type='LogProcessor', window_size=1, by_epoch=True)
 log_level = 'DEBUG'
 load_from = '/root/autodl-tmp/pannuke_app/train/mask_rcnn/consep/model_data/epoch_90.pth'
 resume = False
+evaluation = dict(
+    interval=1, metric='bbox', options=dict(maxDets=[100, 300, 1000]))
 launcher = 'none'
 work_dir = './work_dirs/consep_config'
