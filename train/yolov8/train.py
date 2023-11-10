@@ -19,15 +19,16 @@ from ultralytics.utils import ASSETS, DEFAULT_CFG, WEIGHTS_DIR
 # CFG = get_cfg(DEFAULT_CFG)
 
 overrides = {
-    "data": "./consep.yaml",
+    # "data": "./consep.yaml",
+    "data": "./pannuke.yaml",
     # "data": "./coco8.yaml",
     # "model": "yolov8n.pt",
     "model": "yolov5n6u.pt",
-    "imgsz": 1000,
+    "imgsz": 256,
     "epochs": 100,
     "save": False,
     # "wandb": None,
-    "batch": 4,
+    "batch": 16,
 }
 # CFG.data = "consep.yaml"
 # CFG.imgsz = 1000
