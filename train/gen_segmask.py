@@ -1,9 +1,10 @@
 """temp file to generate segmask for each image in the dataset consep
 """
-import scipy.io as sio
 import glob
-import cv2
 import os
+
+import cv2
+import scipy.io as sio
 
 
 # img = cv2.imread("/home/pannuke_app/train/datasets/CoNSeP/Test/seg_mask/test_4.png", flags=0)
@@ -27,5 +28,8 @@ def generate_segmask(labels_path):
 
 
 if __name__ == "__main__":
-    labels_path = "/home/pannuke_app/train/datasets/CoNSeP/Train/Labels"
+    if os.path.exists("/home/pannuke_app/"):
+        labels_path = "/home/pannuke_app/train/datasets/CoNSeP/Test/Labels"
+    else:
+        labels_path = "/root/autodl-tmp/pannuke_app/train/datasets/CoNSeP/Test/Labels"
     generate_segmask(labels_path)

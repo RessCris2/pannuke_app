@@ -1,19 +1,20 @@
 # _base_ = ["../../../src/unet/unet-s5-d16_fcn_4xb4-40k_hrf-256x256.py"]
-_base_ = ["/home/mmsegmentation/configs/unet/unet-s5-d16_fcn_4xb4-40k_hrf-256x256.py"]
-
+# _base_ = ["/home/mmsegmentation/configs/unet/unet-s5-d16_fcn_4xb4-40k_hrf-256x256.py"]
+_base_ = [
+    "/root/mmlab/mmsegmentation/configs/unet/unet-s5-d16_fcn_4xb4-40k_hrf-256x256.py"
+]
 # -----------------------------------------------------------------------------
 # dataset settings
 # data_root = "/root/autodl-tmp/pannuke_app/train/datasets/CoNSeP/"
 
 # consep
 dataset_type = "HRFDataset"
-# data_root = "/root/autodl-tmp/pannuke_app/train/datasets/CoNSeP/"
+data_root = "/root/autodl-tmp/pannuke_app/train/datasets/CoNSeP/"
 # data_root = "/home/pannuke_app/train/datasets/CoNSeP/"
 metainfo = {
     "classes": ("Inflammatory", "Healthy_epithelial", "Epithelial", "Spindle-shaped"),
     "palette": [(120, 120, 60), (20, 120, 160), (72, 100, 60), (111, 67, 60)],
 }
-data_root = "/home/pannuke_app/train/datasets/CoNSeP"
 
 img_suffix = ".png"
 seg_map_suffix = ".png"
