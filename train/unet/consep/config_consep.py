@@ -8,7 +8,7 @@ _base_ = [
 # data_root = "/root/autodl-tmp/pannuke_app/train/datasets/CoNSeP/"
 
 # consep
-dataset_type = "HRFDataset"
+dataset_type = "CoNSePDataset"
 data_root = "/root/autodl-tmp/pannuke_app/train/datasets/CoNSeP/"
 # data_root = "/home/pannuke_app/train/datasets/CoNSeP/"
 metainfo = {
@@ -63,6 +63,7 @@ train_dataloader = dict(
         # type='RepeatDataset',
         # times=40000,
         dataset=dict(
+            metainfo=metainfo,
             type=dataset_type,
             data_root=data_root,
             reduce_zero_label=True,
@@ -78,6 +79,7 @@ val_dataloader = dict(
     sampler=dict(type="DefaultSampler", shuffle=False),
     dataset=dict(
         type=dataset_type,
+        metainfo=metainfo,
         data_root=data_root,
         reduce_zero_label=True,
         data_prefix=dict(img_path="Test/Images", seg_map_path="Test/seg_mask"),

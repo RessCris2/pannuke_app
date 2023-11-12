@@ -1,15 +1,16 @@
 import glob
+import os
 import os.path as osp
+import shutil
+import xml.etree.ElementTree as ET
+
 import cv2
 import numpy as np
-import os
 
 # import openslide
 import openslide
 from skimage import draw
-import xml.etree.ElementTree as ET
 from tqdm import tqdm
-import shutil
 
 # sys.path.append("/root/autodl-tmp/archive/")
 # from utils import rm_n_mkdir, svs_to_tif
@@ -94,7 +95,7 @@ def convert(
             basename = osp.basename(xml).strip(".xml")
             # 每个xml file 生成对应 inst_mask, type_mask
             inst_path = osp.join(dest_path, "inst", "{0}.npy".format(basename))
-            type_path = osp.join(dest_path, "seg_mask", "{0}.npy".format(basename))
+            type_path = osp.join(dest_path, "seg_mask", "{0}.png".format(basename))
             img_path = osp.join(dest_path, "imgs", "{0}.png".format(basename))
 
             # tif 转换为 png 格式
@@ -103,7 +104,8 @@ def convert(
 
             inst_mask, type_mask = read_xml(xml)
             np.save(inst_path, inst_mask)
-            np.save(type_path, type_mask)
+            # np.save(type_path, type_mask)
+            cv2.imwrite(type_path, type_mask)
 
 
 if __name__ == "__main__":

@@ -1,14 +1,15 @@
 import datetime
 import json
 import os
+
 import numpy as np
-from .pycococreatortools import create_image_info, create_annotation_info
 
 # sys.path.append("/root/autodl-tmp/archive/metrics")
 from .data_transformer import get_transformer
+from .pycococreatortools import create_annotation_info, create_image_info
 
 
-def convert_to_coco(dataset_name, data_dir, test_mode=False):
+def convert_to_coco(dataset_name, data_dir, save_path, test_mode=False):
     """
     Convert experimental datasets to COCO format.
 
@@ -19,7 +20,8 @@ def convert_to_coco(dataset_name, data_dir, test_mode=False):
     Returns:
 
     """
-    save_path = os.path.join(data_dir, "annotations.json")
+    # save_path = os.path.join(save_dir, "annotations.json")
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
     # Get the corresponding class for the given dataset and initialize the class with the dataset dir.
     transformer = get_transformer(dataset_name)(data_dir)

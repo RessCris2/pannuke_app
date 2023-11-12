@@ -24,6 +24,10 @@ src:
         - mmsegmentation unet，需要在原数据集上做处理，生成 png 格式的label
         - mmsegmentation unet_dist, 需要在原 png 格式label的基础上做 距离变换
 
+    
+    在最原始的数据集格式下，生成一份脚本，将数据集处理为结果格式，这个处理过程可以在一台设备上运行模型前快速完成。而不需要保存？或者中间有大数据量生成也不保存？
+    还是直接生成结果数据保存为好，但是脚本也要有。
+
 - models: 模型核心代码
     - MaskRCNN
     - HoVerNet
