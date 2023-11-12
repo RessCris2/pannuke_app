@@ -1,12 +1,12 @@
-"""As for CoNSeP dataset, first has to make the format be [img, inst_id, type_id], with shape [N, h, w, 5],
-    and then extract to generate patches for training and testing.
+"""As for CoNSeP dataset, first has to make the format be [img, inst_id, type_id], 
+with shape [N, h, w, 5], and then extract to generate patches for training and testing.
 """
 import glob
 
 import cv2
 import numpy as np
 import scipy.io as sio
-
+import os
 from ..utils import find_files
 
 
@@ -74,6 +74,27 @@ class CoNSeP(__AbstractDataset):
             ann = ann.astype("int32")
 
         return ann
+
+    def gen_segmask(self, labels_path, dist_map=False):
+        """generate segmask for each image in the dataset consep
+        for the input of MMSegmentation
+        Params:
+            dist_map: if True, generate distance map for each instance
+        """
+
+        save_dir = labels_path.replace("Labels", "seg_mask")
+        os.makedirs(save_dir, exist_ok=True)
+        paths = glob.glob(f"{labels_path}/*.mat")
+        for label_path in paths:
+            ann_type = sio.loadmat(label_path)["type_map"]
+
+            # merge classes for CoNSeP (in paper we only utilise 3 nuclei classes and background)
+            # If own dataset is used, then the below may need to be modified
+            ann_type[(ann_type == 3) | (ann_type == 4)] = 3
+            ann_type[(ann_type == 5) | (ann_type == 6) | (ann_type == 7)] = 4
+            type_path = label_path.replace("Labels", "seg_mask").replace("mat", "png")
+            cv2.imwrite(type_path, ann_type, [cv2.IMWRITE_PNG_COMPRESSION, 9])
+            # cv2.imwrite(type_path, type_map) # tha same as above
 
     def load_category(self):
         """Customize the category information of the data set into coco

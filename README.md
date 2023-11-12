@@ -23,6 +23,10 @@ src:
         - yolo，需要运行代码将 coco格式转换为 yolo 格式
         - mmsegmentation unet，需要在原数据集上做处理，生成 png 格式的label
         - mmsegmentation unet_dist, 需要在原 png 格式label的基础上做 距离变换
+            - 把这两步变换集中到 data_transformer 中 gen_masks 方法里，具体调用时，使用 temp_dir 的方法处理？
+
+
+        把中转的 seg_mask 改为 png 格式， 按照重构后的文件夹目录重新改一下代码
 
 - models: 模型核心代码
     - MaskRCNN
