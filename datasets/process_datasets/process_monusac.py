@@ -27,7 +27,7 @@ def convert2coco():
     dataset_name = "monusac"
     data_dir = "/root/autodl-tmp/pannuke_app/datasets/processed/MoNuSAC/train"
     save_path = "/root/autodl-tmp/pannuke_app/datasets/processed/MoNuSAC/train/train_annotations.json"
-    test_mode = True
+    test_mode = False
 
     convert_to_coco(dataset_name, data_dir, save_path, test_mode=test_mode)
 
@@ -35,7 +35,7 @@ def convert2coco():
     data_dir = "/root/autodl-tmp/pannuke_app/datasets/processed/MoNuSAC/test"
     save_path = "/root/autodl-tmp/pannuke_app/datasets/processed/MoNuSAC/test/test_annotations.json"
     # save_path = "/root/autodl-tmp/pannuke_app/datasets/processed/MoNuSAC/annotations/test_annotations.json"
-    test_mode = True
+    test_mode = False
 
     convert_to_coco(dataset_name, data_dir, save_path, test_mode=test_mode)
 
@@ -45,10 +45,10 @@ def gen_dist_map():
     monusac = MoNuSAC(data_dir)
     insts_path = "/root/autodl-tmp/pannuke_app/datasets/processed/MoNuSAC/train/inst"
     save_dir = "/root/autodl-tmp/pannuke_app/datasets/processed/MoNuSAC/train/dist_map"
-    monusac.gen_dist_map(self, insts_path, save_dir)
+    monusac.gen_dist_map(insts_path, save_dir)
 
 
 if __name__ == "__main__":
     # monusac2mask()
     convert2coco()
-    gen_dist_map()
+    # gen_dist_map()

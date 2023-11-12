@@ -30,13 +30,13 @@ def gen_mask():
     consep = CoNSeP(data_dir)
     labels_path = "/root/autodl-tmp/pannuke_app/datasets/raw/CoNSeP/CoNSeP/Train/Labels"
     save_dir = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/train/seg_mask"
-    consep.gen_mask(labels_path, save_dir)
+    consep.gen_segmask(labels_path, save_dir)
 
     data_dir = "/root/autodl-tmp/pannuke_app/datasets/raw/CoNSeP/CoNSeP/Test"
     consep = CoNSeP(data_dir)
     labels_path = "/root/autodl-tmp/pannuke_app/datasets/raw/CoNSeP/CoNSeP/Test/Labels"
     save_dir = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/test/seg_mask"
-    consep.gen_mask(labels_path, save_dir)
+    consep.gen_segmask(labels_path, save_dir)
 
 
 def gen_dist_map():
@@ -54,6 +54,6 @@ def gen_dist_map():
 
 
 if __name__ == "__main__":
-    convert2coco()
+    # convert2coco()
     gen_mask()
     gen_dist_map()

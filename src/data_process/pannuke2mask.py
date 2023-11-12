@@ -109,7 +109,7 @@ def pn2img(pn_path, save_dir, prefix="train"):
     images = np.load(pn_path)
     for i in range(len(images)):
         image = images[i]
-        save_path = osp.join(save_dir, "{}_{}.png".format(prefix, i))
+        save_path = osp.join(save_dir, "imgs", "{}_{}.png".format(prefix, i))
         cv2.imwrite(save_path, image)
 
 

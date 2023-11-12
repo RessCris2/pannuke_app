@@ -16,4 +16,10 @@
 !mv test/MoNuSAC\ Testing\ Data\ and\ Annotations/* test/
 
 
+!unzip fold_1.zip -d fold1
+!unzip fold_2.zip -d fold2
+!unzip fold_3.zip -d fold3
+
+# 处理完 pannuke2mask 后，合并 train_val
+rsync -av --ignore-existing val/ train/
 ```

@@ -100,7 +100,7 @@ class CoNSeP(__AbstractDataset):
         os.makedirs(save_dir, exist_ok=True)
         paths = glob.glob(f"{labels_path}/*.mat")
         for label_path in paths:
-            basename = pathlib.Path.stem(label_path)
+            basename = pathlib.Path(label_path).stem
             ann_type = sio.loadmat(label_path)["type_map"]
 
             # merge classes for CoNSeP (in paper we only utilise 3 nuclei classes and background)
@@ -121,7 +121,7 @@ class CoNSeP(__AbstractDataset):
         os.makedirs(save_dir, exist_ok=True)
         paths = glob.glob(f"{labels_path}/*.mat")
         for label_path in paths:
-            basename = pathlib.Path.stem(label_path)
+            basename = pathlib.Path(label_path).stem
             # if need dist transform, we need to use inst map for transformation
             ann_inst = sio.loadmat(label_path)["inst_map"]
             ann_inst = ann_inst.astype("uint8")
@@ -210,7 +210,7 @@ class PanNuke(__AbstractDataset):
         os.makedirs(save_dir, exist_ok=True)
         paths = glob.glob(f"{insts_path}/*.npy")
         for label_path in paths:
-            basename = pathlib.Path.stem(label_path)
+            basename = pathlib.Path(label_path).stem
             # if need dist transform, we need to use inst map for transformation
             ann_inst = np.load(label_path)
             ann_inst = ann_inst.astype("uint8")
@@ -301,7 +301,7 @@ class MoNuSAC(__AbstractDataset):
         os.makedirs(save_dir, exist_ok=True)
         paths = glob.glob(f"{insts_path}/*.npy")
         for label_path in paths:
-            basename = pathlib.Path.stem(label_path)
+            basename = pathlib.Path(label_path).stem
             # if need dist transform, we need to use inst map for transformation
             ann_inst = np.load(label_path)
             ann_inst = ann_inst.astype("uint8")

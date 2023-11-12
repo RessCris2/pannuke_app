@@ -2,6 +2,8 @@
 datasets/raw/
 datasets/processed/
 train/datasets/
+
+depreciated/
 # models dir
 **/model_data/
 .ipynb_checkpoints/
