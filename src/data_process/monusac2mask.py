@@ -13,7 +13,7 @@ from skimage import draw
 from tqdm import tqdm
 
 # sys.path.append("/root/autodl-tmp/archive/")
-# from utils import rm_n_mkdir, svs_to_tif
+from ..utils import rm_n_mkdir, svs_to_tif
 
 
 def rm_n_mkdir(dir_path):
@@ -100,6 +100,8 @@ def convert(
 
             # tif 转换为 png 格式
             img_file = xml.replace("xml", "tif")
+            if not os.path.exists(img_file):
+                svs_to_tif(img_file.replace("tif", "svs"))
             cv2.imwrite(img_path, cv2.imread(img_file))
 
             inst_mask, type_mask = read_xml(xml)

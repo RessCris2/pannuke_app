@@ -1,5 +1,7 @@
 # DATASET DIR
-datasets/
+datasets/raw/
+datasets/processed/
+train/datasets/
 # models dir
 **/model_data/
 .ipynb_checkpoints/

@@ -92,8 +92,9 @@ def pn2inst_type(pn_mask_path, save_dir, prefix="train"):
         np.save(inst_path, relabeled_inst_mask)
 
         type_mask = mask[..., [5, 0, 1, 2, 3, 4]].argmax(axis=-1)
-        seg_mask_path = f"{seg_mask_dir}/{prefix}_{idx}.npy"
-        np.save(seg_mask_path, type_mask)
+        seg_mask_path = f"{seg_mask_dir}/{prefix}_{idx}.png"
+        # np.save(seg_mask_path, type_mask)
+        cv2.imwrite(seg_mask_path, type_mask)
 
 
 def pn2img(pn_path, save_dir, prefix="train"):

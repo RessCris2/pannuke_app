@@ -34,6 +34,9 @@ def monusac2mask():
     convert(data_path, dest_path)
 
 
+def pannuke2mask():
+    pass
+
 if __name__ == "__main__":
     monusac2mask()
 
