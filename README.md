@@ -57,7 +57,11 @@ src:
 mAP 因为需要score 的输出，unet和unet-dist 不参与评估。
 yolo，maskrcnn，hovernet 要做 mAP.
 5中模型都要做 PQ, AJI, DICE.
+复看之前的评估代码，发现根本没有必要做修改。之前做修改只是为了 maskrcnn 做适配。但是我发现其实不去计算就好了。
+proposal 的方式，为什么一定要计算呢，不算拉倒。
 
 
 先确认预测后的数据情况
+
 evaluate::coco_pred 中写了一个转换为 coco api 可读的脚本，后续计算图的 map 可以参考。
+
