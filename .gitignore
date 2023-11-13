@@ -2,6 +2,8 @@
 datasets/raw/
 datasets/processed/
 train/datasets/
+predict/work_dirs/
+predict/maskrcnn/epoch_1.pth
 
 depreciated/
 # models dir
@@ -16,7 +18,7 @@ wandb/
 model_data/
 
 *.pt
-
+*.pth
 train/ultralytics/
 
 # Byte-compiled / optimized / DLL files

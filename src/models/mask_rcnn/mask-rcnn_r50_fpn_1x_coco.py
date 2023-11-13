@@ -1,7 +1,8 @@
 _base_ = [
-    'mask-rcnn_r50_fpn.py',
-    'coco_instance.py',
-    'schedule_1x.py', 'default_runtime.py'
+    "mask-rcnn_r50_fpn.py",
+    "coco_instance.py",
+    "schedule_1x.py",
+    "default_runtime.py",
 ]
 
 # classes = ('Neoplastic','Inflammatory','Connective','Dead','Epithelial')

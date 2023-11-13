@@ -43,8 +43,11 @@ src:
 
 - evaluation: 评估相关
 
+## UNet 后处理
 
-# 预测后的数据类型
+
+# 评估指标
+## 预测后的数据类型
 
 衔接评估时的数据类型
 以及可视化时候的数据类型
@@ -56,5 +59,5 @@ yolo，maskrcnn，hovernet 要做 mAP.
 5中模型都要做 PQ, AJI, DICE.
 
 
-
 先确认预测后的数据情况
+evaluate::coco_pred 中写了一个转换为 coco api 可读的脚本，后续计算图的 map 可以参考。

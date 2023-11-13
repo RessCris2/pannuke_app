@@ -9,8 +9,10 @@ import platform
 # else:
 #     _base_ = ["/root/autodl-tmp/pannuke_app/src/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"]
 #     data_root = "/root/autodl-tmp/pannuke_app/train/datasets/CoNSeP/"
-_base_ = ["/root/autodl-tmp/pannuke_app/src/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"]
-data_root = "/root/autodl-tmp/pannuke_app/train/datasets/CoNSeP/"
+_base_ = [
+    "/root/autodl-tmp/pannuke_app/src/models/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
+]
+data_root = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/"
 
 # consep
 dataset_type = "CocoDataset"
@@ -51,8 +53,8 @@ train_dataloader = dict(
         type=dataset_type,
         data_root=data_root,
         metainfo=metainfo,
-        ann_file="Train/annotations.json",
-        data_prefix=dict(img="Train/Images/"),
+        ann_file="train/train_annotations.json",
+        data_prefix=dict(img="train/imgs/"),
         filter_cfg=dict(filter_empty_gt=True, min_size=32),
         pipeline=train_pipeline,
         backend_args=backend_args,
@@ -69,8 +71,8 @@ val_dataloader = dict(
         type=dataset_type,
         data_root=data_root,
         metainfo=metainfo,
-        ann_file="Test/annotations.json",
-        data_prefix=dict(img="Test/Images/"),
+        ann_file="test/test_annotations.json",
+        data_prefix=dict(img="test/imgs/"),
         test_mode=True,
         pipeline=test_pipeline,
         backend_args=backend_args,
@@ -81,7 +83,7 @@ test_dataloader = val_dataloader
 
 val_evaluator = dict(
     type="CocoMetric",
-    ann_file=data_root + "Test/annotations.json",
+    ann_file=data_root + "test/test_annotations.json",
     metric=["bbox", "segm"],
     format_only=False,
     backend_args=backend_args,
@@ -89,7 +91,7 @@ val_evaluator = dict(
 )
 test_evaluator = val_evaluator = dict(
     type="CocoMetric",
-    ann_file=data_root + "Test/annotations.json",
+    ann_file=data_root + "test/test_annotations.json",
     metric=["bbox", "segm"],
     format_only=False,
     backend_args=backend_args,
@@ -102,7 +104,7 @@ model = dict(
 )
 
 
-evaluation = dict(interval=1, metric='bbox', options={'maxDets': [100, 300, 1000]})
+evaluation = dict(interval=1, metric="bbox", options={"maxDets": [100, 300, 1000]})
 
 # if osp.exists("/home/pannuke_app/"):
 
