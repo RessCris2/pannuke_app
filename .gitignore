@@ -4,7 +4,7 @@ datasets/processed/
 train/datasets/
 predict/work_dirs/
 predict/maskrcnn/epoch_1.pth
-
+predict/maskrcnn/vis
 depreciated/
 # models dir
 **/model_data/
