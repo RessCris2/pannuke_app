@@ -14,8 +14,11 @@ Code issues records(To be fixed):
 - UNet 的训练部分只用到了语义分割的label， 而后续经过后处理评估却用了实例分割的效果。。。？？？？
     觉得可以直接把 ws 处理后的效果和实例分割的效果计算损失来更新模型
 - 数据集的描述可以参考 COCO 论文, PASCAL VOC 介绍的信息等。
+- 评估指标模块，关注 mAP 的计算（单张图片，单个类别，整体）； FLOPS， 推测速度；
+    - PQ, AJI, DICE
 
 
+# 代码结构
 src:
 - data_process 数据转换代码
     - 数据转换过程以 coco 格式 作为核心中枢。每个数据集首先通过一些初始变换，然后输入给 data_transformer 能够提取数据，convert2coco 基于 data_transformer 做上层调用，生成 COCO 格式
@@ -24,7 +27,6 @@ src:
         - mmsegmentation unet，需要在原数据集上做处理，生成 png 格式的label
         - mmsegmentation unet_dist, 需要在原 png 格式label的基础上做 距离变换
             - 把这两步变换集中到 data_transformer 中 gen_masks 方法里，具体调用时，使用 temp_dir 的方法处理？
-
 
         把中转的 seg_mask 改为 png 格式， 按照重构后的文件夹目录重新改一下代码
 
@@ -42,3 +44,17 @@ src:
 - evaluation: 评估相关
 
 
+# 预测后的数据类型
+
+衔接评估时的数据类型
+以及可视化时候的数据类型
+
+规划一个中转类型？比如 COCO？或者别的，然后在这个基础上做针对每个评估指标的转换？
+
+mAP 因为需要score 的输出，unet和unet-dist 不参与评估。
+yolo，maskrcnn，hovernet 要做 mAP.
+5中模型都要做 PQ, AJI, DICE.
+
+
+
+先确认预测后的数据情况

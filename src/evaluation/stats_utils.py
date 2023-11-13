@@ -8,7 +8,7 @@ from .utils import fn_time
 torch.cuda.empty_cache()
 
 
-# --------------------------Optimised for Speed
+# -------------------------- Optimised for Speed
 def get_fast_aji(true_id_list, true_masks, pred_id_list, pred_masks):
     """AJI version distributed by MoNuSeg, has no permutation problem but suffered from
     over-penalisation similar to DICE2.
