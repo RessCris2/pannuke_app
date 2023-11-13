@@ -62,17 +62,24 @@ yolo，maskrcnn，hovernet 要做 mAP.
 ### 确认 hovernet 的评估代码，然后？
 aji, aji+, dice, pq 这些都只需要使用 inst_map 参与计算就可以了。
 hover中提出的分类指标不予计算。
-
-
-
 proposal 的方式，为什么一定要计算呢，不算拉倒。
-
-
 
 ## 整理
 evaluate::coco_pred 中写了一个转换为 coco api 可读的脚本，后续计算图的 map 可以参考。
 
 TODO
 - 几个数据集 hovernet 的输入，输出
+    - hovernet 用原来的代码完全顺利跑起来，但是用了 numpy==1.19.1, yolo 需要更高版本，跑模型时候需要注意。
 - unet的后处理
 - 整体的评估批量运行
+
+
+## 关于几个模型的评估口径，在论文中可以仔细描述
+![Alt text](image-1.png)
+
+明日工作核心：校验整个评估的代码是否没问题。
+1、pq等计算maskrcnn, yolo 的处理是否ok
+2、unet, hovernet 计算 mAP 的数据， 关键是确定 loadRes 或者 torchmetrics 中对mask de yaoqiu 
+3、两者之间，因为 maskrcnn, yolo 也需要处理mask， 两者要结合参考
+
+计算每张图片的效果这个，算了，不算了，太麻烦了，而且很多小问题。先不管，顾全大局。
