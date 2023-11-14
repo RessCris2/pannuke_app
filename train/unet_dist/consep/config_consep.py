@@ -96,11 +96,11 @@ test_evaluator = val_evaluator
 # -----------------------------------------------------------------------------
 model = dict(
     decode_head=dict(
-        num_classes=1,
+        num_classes=4,
         loss_decode=dict(type="MyLoss"),
     ),
     auxiliary_head=dict(
-        num_classes=1,
+        num_classes=4,
         loss_decode=dict(type="MyLoss", loss_weight=0.4),
     ),
 )

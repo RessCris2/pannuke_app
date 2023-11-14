@@ -16,7 +16,7 @@ depreciated/
 visualize/**.npy
 wandb/
 model_data/
-
+last_checkpoint
 *.pt
 *.pth
 train/ultralytics/

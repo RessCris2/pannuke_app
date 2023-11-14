@@ -2,7 +2,14 @@ import cv2
 import numpy as np
 from skimage import img_as_float, img_as_ubyte
 from skimage.measure import label
-from skimage.morphology import dilation, disk, erosion, reconstruction, square
+from skimage.morphology import (
+    dilation,
+    disk,
+    erosion,
+    reconstruction,
+    remove_small_objects,
+    square,
+)
 from skimage.segmentation import watershed
 
 
@@ -88,7 +95,7 @@ def arrange_label(mat):
     return mat
 
 
-def dynamic_watershed_alias(p_img, lamb, p_thresh=0.5, mode="dist"):
+def dynamic_watershed_alias(p_img, lamb=1, p_thresh=0.5, mode="dist"):
     """
     Applies our dynamic watershed to 2D prob/dist image.
     """
@@ -104,6 +111,8 @@ def dynamic_watershed_alias(p_img, lamb, p_thresh=0.5, mode="dist"):
     markers_Probs_inv = label(markers_Probs_inv)
     ws_labels = watershed(Hrecons, markers_Probs_inv, mask=b_img)
     ar_label = arrange_label(ws_labels)
+    # TODO: test 是否需要加
+    remove_small_objects(ar_label, min_size=100, connectivity=1, in_place=True)
     wsl = generate_wsl(ar_label)
     ar_label[wsl > 0] = 0
 

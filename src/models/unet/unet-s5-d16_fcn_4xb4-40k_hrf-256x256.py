@@ -1,6 +1,6 @@
 _base_ = [
     "fcn_unet_s5-d16.py",
-    "datasets/hrf.py",
+    "hrf.py",
     "default_runtime.py",
     "schedule_40k.py",
 ]
