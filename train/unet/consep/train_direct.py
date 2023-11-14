@@ -33,7 +33,7 @@ if __name__ == "__main__":
     # cfg.data_root = "/root/autodl-tmp/datasets/pannuke/coco_format/"
     cfg.train_dataloader.batch_size = 4
     # Set up working dir to save files and logs.
-    cfg.work_dir = "/home/pannuke_app/train/unet/consep/work-dir"
+    cfg.work_dir = "/root/autodl-tmp/pannuke_app/train/unet/consep/work-dir"
     runner = Runner.from_cfg(cfg)
 
     # start training

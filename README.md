@@ -78,8 +78,8 @@ TODO
 ![Alt text](image-1.png)
 
 明日工作核心：校验整个评估的代码是否没问题。
-1、pq等计算maskrcnn, yolo 的处理是否ok
-2、unet, hovernet 计算 mAP 的数据， 关键是确定 loadRes 或者 torchmetrics 中对mask de yaoqiu 
-3、两者之间，因为 maskrcnn, yolo 也需要处理mask， 两者要结合参考
+- pq 等计算maskrcnn, yolo 的处理是否ok
+- unet, hovernet 计算 mAP 的数据， 关键是确定 loadRes 或者 torchmetrics 中对mask de yaoqiu 
+- 两者之间，因为 maskrcnn, yolo 也需要处理mask， 两者要结合参考
 
 计算每张图片的效果这个，算了，不算了，太麻烦了，而且很多小问题。先不管，顾全大局。

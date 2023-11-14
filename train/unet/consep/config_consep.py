@@ -1,7 +1,7 @@
 # _base_ = ["../../../src/unet/unet-s5-d16_fcn_4xb4-40k_hrf-256x256.py"]
 # _base_ = ["/home/mmsegmentation/configs/unet/unet-s5-d16_fcn_4xb4-40k_hrf-256x256.py"]
 _base_ = [
-    "/root/mmlab/mmsegmentation/configs/unet/unet-s5-d16_fcn_4xb4-40k_hrf-256x256.py"
+    "/root/autodl-tmp/pannuke_app/src/models/unet/unet-s5-d16_fcn_4xb4-40k_hrf-256x256.py"
 ]
 # -----------------------------------------------------------------------------
 # dataset settings
@@ -9,7 +9,7 @@ _base_ = [
 
 # consep
 dataset_type = "CoNSePDataset"
-data_root = "/root/autodl-tmp/pannuke_app/train/datasets/CoNSeP/"
+data_root = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/"
 # data_root = "/home/pannuke_app/train/datasets/CoNSeP/"
 metainfo = {
     "classes": ("Inflammatory", "Healthy_epithelial", "Epithelial", "Spindle-shaped"),
@@ -67,7 +67,7 @@ train_dataloader = dict(
             type=dataset_type,
             data_root=data_root,
             reduce_zero_label=True,
-            data_prefix=dict(img_path="Train/Images", seg_map_path="Train/seg_mask"),
+            data_prefix=dict(img_path="train/imgs", seg_map_path="train/seg_mask"),
             pipeline=train_pipeline,
         )
     ),
@@ -82,7 +82,7 @@ val_dataloader = dict(
         metainfo=metainfo,
         data_root=data_root,
         reduce_zero_label=True,
-        data_prefix=dict(img_path="Test/Images", seg_map_path="Test/seg_mask"),
+        data_prefix=dict(img_path="test/imgs", seg_map_path="test/seg_mask"),
         pipeline=test_pipeline,
     ),
 )
