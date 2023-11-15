@@ -101,7 +101,7 @@ class CoNSeP(__AbstractDataset):
             basename = pathlib.Path(label_path).stem
             ann_inst = sio.loadmat(label_path)["inst_map"]
             ann_inst = ann_inst.astype("uint8")
-            inst_path = f"{save_dir}/{basename}.png"
+            inst_path = f"{save_dir}/{basename}.npy"
             np.save(inst_path, ann_inst)
 
     def gen_segmask(self, labels_path, save_dir):

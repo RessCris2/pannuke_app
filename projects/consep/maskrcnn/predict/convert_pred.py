@@ -3,6 +3,7 @@
 import json
 
 import numpy as np
+from pycocotools import mask as mask_utils
 from pycocotools.coco import COCO
 from pycocotools.cocoeval import COCOeval
 
@@ -74,3 +75,27 @@ annotations:
 def convert_pred2masks():
     """将数据集转换为适用于计算 pq, dice, aji+ 的格式"""
     pass
+
+
+# # 假设你有一个 mmdetection 输出的 mask
+# mask = np.random.randint(2, size=(100, 100), dtype=np.uint8)
+
+# # 将二进制掩码转换为 RLE 编码
+# rle_encoded = mask_utils.encode(np.array(mask[:, :, None], order="F"))[0]
+
+# # 将 RLE 编码解码为二进制掩码
+# decoded_mask = mask_utils.decode([rle_encoded])
+
+# # 显示原始 mask 和解码后的 mask
+# mmcv.imshow_bboxes(
+#     "Original Mask", [mask], colors=[(0, 255, 0)], thickness=2, show=True
+# )
+# mmcv.imshow_bboxes(
+#     "Decoded Mask", [decoded_mask], colors=[(0, 255, 0)], thickness=2, show=True
+# )
+
+
+if __name__ == "__main__":
+    ann_file = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/test/test_annotations.json"
+    pred_result_dir = "/root/autodl-tmp/pannuke_app/predict/pred_data"
+    convert_pred2coco(ann_file, pred_result_dir)

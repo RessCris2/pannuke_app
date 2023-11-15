@@ -104,5 +104,8 @@ predict: 在当前文件夹生成预测结果文件？
 
 另一种方法就是不保存，直接评估。
 
-
-maskrcnn 的inference 简直慢到让人崩溃。
+maskrcnn:
+- 训练得到的 epoch.pth, cfg
+- 预测
+- 转换格式
+- 计算指标
