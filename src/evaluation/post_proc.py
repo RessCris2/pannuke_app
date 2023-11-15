@@ -112,7 +112,7 @@ def dynamic_watershed_alias(p_img, lamb=1, p_thresh=0.5, mode="dist"):
     ws_labels = watershed(Hrecons, markers_Probs_inv, mask=b_img)
     ar_label = arrange_label(ws_labels)
     # TODO: test 是否需要加
-    remove_small_objects(ar_label, min_size=100, connectivity=1, in_place=True)
+    ar_label = remove_small_objects(ar_label, min_size=100, connectivity=1)
     wsl = generate_wsl(ar_label)
     ar_label[wsl > 0] = 0
 

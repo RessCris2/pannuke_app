@@ -54,7 +54,7 @@ class Config(object):
                 )
 
         self.dataset_name = "consep"  # extracts dataset info from dataset.py
-        self.log_dir = "logs/"  # where checkpoints will be saved
+        self.log_dir = "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/train/model_data/"  # where checkpoints will be saved
 
         # paths to training and validation patches
         self.train_dir_list = [

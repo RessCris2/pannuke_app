@@ -71,116 +71,147 @@ options:
     --save_mask             To save mask. [default: False]
 """
 
-import torch
+import argparse
+import copy
 import logging
 import os
-import copy
-from misc.utils import log_info
+
+import torch
 from docopt import docopt
+from misc.utils import log_info
 
-#-------------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------------
 
-if __name__ == '__main__':
-    sub_cli_dict = {'tile' : tile_cli, 'wsi' : wsi_cli}
-    args = docopt(__doc__, help=False, options_first=True, 
-                    version='HoVer-Net Pytorch Inference v1.0')
-    sub_cmd = args.pop('<command>')
-    sub_cmd_args = args.pop('<args>')
+if __name__ == "__main__":
+    sub_cli_dict = {"tile": tile_cli, "wsi": wsi_cli}
+    # args = docopt(
+    #     __doc__,
+    #     help=False,
+    #     options_first=True,
+    #     version="HoVer-Net Pytorch Inference v1.0",
+    # )
+    parser = argparse.ArgumentParser(description="Train a detector")
+    # sub_cmd = args.pop("<command>")
+    # sub_cmd_args = args.pop("<args>")
 
-    # ! TODO: where to save logging
-    logging.basicConfig(
-        level=logging.INFO,
-        format='|%(asctime)s.%(msecs)03d| [%(levelname)s] %(message)s',datefmt='%Y-%m-%d|%H:%M:%S',
-        handlers=[
-            logging.FileHandler("debug.log"),
-            logging.StreamHandler()
-        ]
+    # # ! TODO: where to save logging
+    # logging.basicConfig(
+    #     level=logging.INFO,
+    #     format="|%(asctime)s.%(msecs)03d| [%(levelname)s] %(message)s",
+    #     datefmt="%Y-%m-%d|%H:%M:%S",
+    #     handlers=[logging.FileHandler("debug.log"), logging.StreamHandler()],
+    # )
+
+    # if args["--help"] and sub_cmd is not None:
+    #     if sub_cmd in sub_cli_dict:
+    #         print(sub_cli_dict[sub_cmd])
+    #     else:
+    #         print(__doc__)
+    #     exit()
+    # if args["--help"] or sub_cmd is None:
+    #     print(__doc__)
+    #     exit()
+
+    # sub_args = docopt(sub_cli_dict[sub_cmd], argv=sub_cmd_args, help=True)
+
+    # args.pop("--version")
+    # gpu_list = args.pop("--gpu")
+    # os.environ["CUDA_VISIBLE_DEVICES"] = gpu_list
+    args = dict()
+    args["gpu"] = "1"
+    args["model_path"] = (
+        "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/train/model_data/net_epoch=1.tar",
     )
-
-    if args['--help'] and sub_cmd is not None:
-        if sub_cmd in sub_cli_dict: 
-            print(sub_cli_dict[sub_cmd])
-        else:
-            print(__doc__)
-        exit()
-    if args['--help'] or sub_cmd is None:
-        print(__doc__)
-        exit()
-
-    sub_args = docopt(sub_cli_dict[sub_cmd], argv=sub_cmd_args, help=True)
-    
-    args.pop('--version')
-    gpu_list = args.pop('--gpu')
-    os.environ['CUDA_VISIBLE_DEVICES'] = gpu_list
-
+    # args['input_dir']=
+    args["type_info_path"] = ("/root/autodl-tmp/pannuke_app/hover/type_info.json",)
+    args["batch_size"] = 4
+    args["nr_inference_workers"] = 4
+    args["nr_post_proc_workers"] = 4
+    args["model_mode"] = "original"
+    args["nr_types"] = 5
+    args[
+        "output_dir"
+    ] = '"/root/autodl-tmp/pannuke_app/projects/consep/hovernet/predict/pred_data"'
+    args[
+        "input_dir"
+    ] = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/test/imgs"
+    args["mem_usage"] = 0.4
     nr_gpus = torch.cuda.device_count()
-    log_info('Detect #GPUS: %d' % nr_gpus)
 
-    args = {k.replace('--', '') : v for k, v in args.items()}
-    sub_args = {k.replace('--', '') : v for k, v in sub_args.items()}
-    if args['model_path'] == None:
-        raise Exception('A model path must be supplied as an argument with --model_path.')
+    log_info("Detect #GPUS: %d" % nr_gpus)
 
-    nr_types = int(args['nr_types']) if int(args['nr_types']) > 0 else None
+    args = {k.replace("--", ""): v for k, v in args.items()}
+    # sub_args = {k.replace("--", ""): v for k, v in sub_args.items()}
+    if args["model_path"] == None:
+        raise Exception(
+            "A model path must be supplied as an argument with --model_path."
+        )
+
+    nr_types = int(args["nr_types"]) if int(args["nr_types"]) > 0 else None
     method_args = {
-        'method' : {
-            'model_args' : {
-                'nr_types'   : nr_types,
-                'mode'       : args['model_mode'],
+        "method": {
+            "model_args": {
+                "nr_types": nr_types,
+                "mode": args["model_mode"],
             },
-            'model_path' : args['model_path'],
+            "model_path": args["model_path"],
         },
-        'type_info_path'  : None if args['type_info_path'] == '' \
-                            else args['type_info_path'],
+        "type_info_path": None
+        if args["type_info_path"] == ""
+        else args["type_info_path"],
     }
 
     # ***
     run_args = {
-        'batch_size' : int(args['batch_size']) * nr_gpus,
-
-        'nr_inference_workers' : int(args['nr_inference_workers']),
-        'nr_post_proc_workers' : int(args['nr_post_proc_workers']),
+        "batch_size": int(args["batch_size"]) * nr_gpus,
+        "nr_inference_workers": int(args["nr_inference_workers"]),
+        "nr_post_proc_workers": int(args["nr_post_proc_workers"]),
     }
 
-    if args['model_mode'] == 'fast':
-        run_args['patch_input_shape'] = 256
-        run_args['patch_output_shape'] = 164
+    if args["model_mode"] == "fast":
+        run_args["patch_input_shape"] = 256
+        run_args["patch_output_shape"] = 164
     else:
-        run_args['patch_input_shape'] = 270
-        run_args['patch_output_shape'] = 80
+        run_args["patch_input_shape"] = 270
+        run_args["patch_output_shape"] = 80
 
-    if sub_cmd == 'tile':
-        run_args.update({
-            'input_dir'      : sub_args['input_dir'],
-            'output_dir'     : sub_args['output_dir'],
+    sub_cmd = "tile"
 
-            'mem_usage'   : float(sub_args['mem_usage']),
-            'draw_dot'    : sub_args['draw_dot'],
-            'save_qupath' : sub_args['save_qupath'],
-            'save_raw_map': sub_args['save_raw_map'],
-        })
+    run_args.update(
+        {
+            "input_dir": args["input_dir"],
+            "output_dir": args["output_dir"],
+            "mem_usage": float(args["mem_usage"]),
+            "draw_dot": False,
+            "save_qupath": False,
+            "save_raw_map": False,
+        }
+    )
 
-    if sub_cmd == 'wsi':
-        run_args.update({
-            'input_dir'      : sub_args['input_dir'],
-            'output_dir'     : sub_args['output_dir'],
-            'input_mask_dir' : sub_args['input_mask_dir'],
-            'cache_path'     : sub_args['cache_path'],
+    # if sub_cmd == "wsi":
+    #     run_args.update(
+    #         {
+    #             "input_dir": sub_args["input_dir"],
+    #             "output_dir": sub_args["output_dir"],
+    #             "input_mask_dir": sub_args["input_mask_dir"],
+    #             "cache_path": sub_args["cache_path"],
+    #             "proc_mag": int(sub_args["proc_mag"]),
+    #             "ambiguous_size": int(sub_args["ambiguous_size"]),
+    #             "chunk_shape": int(sub_args["chunk_shape"]),
+    #             "tile_shape": int(sub_args["tile_shape"]),
+    #             "save_thumb": sub_args["save_thumb"],
+    #             "save_mask": sub_args["save_mask"],
+    #         }
+    #     )
+    # # ***
 
-            'proc_mag'       : int(sub_args['proc_mag']),
-            'ambiguous_size' : int(sub_args['ambiguous_size']),
-            'chunk_shape'    : int(sub_args['chunk_shape']),
-            'tile_shape'     : int(sub_args['tile_shape']),
-            'save_thumb'     : sub_args['save_thumb'],
-            'save_mask'      : sub_args['save_mask'],
-        })
-    # ***
-    
-    if sub_cmd == 'tile':
+    if sub_cmd == "tile":
         from infer.tile import InferManager
+
         infer = InferManager(**method_args)
         infer.process_file_list(run_args)
     else:
         from infer.wsi import InferManager
+
         infer = InferManager(**method_args)
         infer.process_wsi_list(run_args)

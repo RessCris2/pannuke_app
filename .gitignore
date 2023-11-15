@@ -1,6 +1,7 @@
 # DATASET DIR
 datasets/raw/
 datasets/processed/
+datasets/processed_old/
 train/datasets/
 predict/work_dirs/
 predict/maskrcnn/epoch_1.pth

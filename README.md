@@ -80,7 +80,8 @@ TODO
 明日工作核心：校验整个评估的代码是否没问题。
 - pq 等计算maskrcnn, yolo 的处理是否ok
 - unet, hovernet 计算 mAP 的数据， 关键是确定 loadRes 或者 torchmetrics 中对mask de yaoqiu 
-- 两者之间，因为 maskrcnn, yolo 也需要处理mask， 两者要结合参考
+- 两者之间，因为 maskrcnn, yolo 也需要处理mask， 两者要结合参考;
+     - maskrcnn 输出的 segmentation 就是 rle，应该不需要额外做转换。
 
 计算每张图片的效果这个，算了，不算了，太麻烦了，而且很多小问题。先不管，顾全大局。
 
@@ -105,7 +106,23 @@ predict: 在当前文件夹生成预测结果文件？
 另一种方法就是不保存，直接评估。
 
 maskrcnn:
-- 训练得到的 epoch.pth, cfg
-- 预测
-- 转换格式
-- 计算指标
+- 训练得到的 epoch.pth, cfg (yes)
+- 预测(yes)
+- 转换格式(map, )
+- 计算指标(yes)
+
+unet, unet-dist
+- 训练(yes)
+- 预测(yes)
+- 转换格式(yes)
+- 计算指标(yes)
+
+评估 map 时关注 maxDets 的参数影响
+
+hovernet
+- 训练(yes)
+- 预测()
+- 转换格式()
+- 计算指标()
+
+为了适应数据传递， consep 的load_ann 是不是要改为 process 之后的数据方式？
