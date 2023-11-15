@@ -121,8 +121,8 @@ unet, unet-dist
 
 hovernet
 - 训练(yes)
-- 预测()
-- 转换格式()
-- 计算指标()
+- 预测(yes)
+- 转换格式(yes)
+- 计算指标(yes)
 
 为了适应数据传递， consep 的load_ann 是不是要改为 process 之后的数据方式？

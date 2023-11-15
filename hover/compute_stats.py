@@ -8,14 +8,14 @@ import numpy as np
 import pandas as pd
 import scipy.io as sio
 
-from metrics.stats_utils import (
+from .metrics.stats_utils import (
     get_dice_1,
     get_fast_aji,
     get_fast_aji_plus,
     get_fast_dice_2,
     get_fast_pq,
+    pair_coordinates,
     remap_label,
-    pair_coordinates
 )
 
 
@@ -23,7 +23,7 @@ def run_nuclei_type_stat(pred_dir, true_dir, type_uid_list=None, exhaustive=True
     """GT must be exhaustively annotated for instance location (detection).
 
     Args:
-        true_dir, pred_dir: Directory contains .mat annotation for each image. 
+        true_dir, pred_dir: Directory contains .mat annotation for each image.
                             Each .mat must contain:
                     --`inst_centroid`: Nx2, contains N instance centroid
                                        of mass coordinates (X, Y)
@@ -34,7 +34,7 @@ def run_nuclei_type_stat(pred_dir, true_dir, type_uid_list=None, exhaustive=True
                         Default to `None` means available nuclei type in GT.
         exhaustive : Flag to indicate whether GT is exhaustively labelled
                      for instance types
-                     
+
     """
     file_list = glob.glob(pred_dir + "*.mat")
     file_list.sort()  # ensure same order [1]

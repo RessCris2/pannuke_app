@@ -120,10 +120,11 @@ if __name__ == "__main__":
     args = dict()
     args["gpu"] = "1"
     args["model_path"] = (
-        "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/train/model_data/net_epoch=1.tar",
+        # "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/train/model_data/net_epoch=1.tar",
+        "/root/autodl-tmp/pannuke_app/hover/logs/00/net_epoch=1.tar"
     )
     # args['input_dir']=
-    args["type_info_path"] = ("/root/autodl-tmp/pannuke_app/hover/type_info.json",)
+    args["type_info_path"] = "/root/autodl-tmp/pannuke_app/hover/type_info.json"
     args["batch_size"] = 4
     args["nr_inference_workers"] = 4
     args["nr_post_proc_workers"] = 4
@@ -131,7 +132,7 @@ if __name__ == "__main__":
     args["nr_types"] = 5
     args[
         "output_dir"
-    ] = '"/root/autodl-tmp/pannuke_app/projects/consep/hovernet/predict/pred_data"'
+    ] = "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/predict/pred_data"
     args[
         "input_dir"
     ] = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/test/imgs"
