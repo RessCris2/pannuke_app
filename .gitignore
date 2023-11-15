@@ -8,6 +8,7 @@ predict/maskrcnn/vis
 depreciated/
 # models dir
 **/model_data/
+pred_data/
 .ipynb_checkpoints/
 **/.ipynb_checkpoints
 *.zip
