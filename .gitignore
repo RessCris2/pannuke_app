@@ -6,6 +6,7 @@ predict/work_dirs/
 predict/maskrcnn/epoch_1.pth
 predict/maskrcnn/vis
 depreciated/
+hover/dataset/
 # models dir
 **/model_data/
 pred_data/
