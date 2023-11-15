@@ -89,6 +89,21 @@ class CoNSeP(__AbstractDataset):
 
         return ann
 
+    def gen_inst_map(self, labels_path, save_dir):
+        """generate segmask for each image in the dataset consep
+        for the input of MMSegmentation
+        Params:
+        """
+        # save_dir = labels_path.replace("Labels", "seg_mask")
+        os.makedirs(save_dir, exist_ok=True)
+        paths = glob.glob(f"{labels_path}/*.mat")
+        for label_path in paths:
+            basename = pathlib.Path(label_path).stem
+            ann_inst = sio.loadmat(label_path)["inst_map"]
+            ann_inst = ann_inst.astype("uint8")
+            inst_path = f"{save_dir}/{basename}.png"
+            np.save(inst_path, ann_inst)
+
     def gen_segmask(self, labels_path, save_dir):
         """generate segmask for each image in the dataset consep
         for the input of MMSegmentation
