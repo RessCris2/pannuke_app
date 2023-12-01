@@ -37,6 +37,14 @@ src:
 - models: 模型核心代码
     - MaskRCNN
     - HoVerNet
+        - train
+            - extract_patches 预处理数据
+            - run_train.py
+                - Before training:
+                    Set path to the data directories in config.py
+                    Set path where checkpoints will be saved in config.py
+                    Set path to pretrained Preact-ResNet50 weights in models/hovernet/opt.py. Download the weights here.
+                    Modify hyperparameters, including number of epochs and learning rate in models/hovernet/opt.py.
     - UNet
     - UNet-dist
     - YOLO

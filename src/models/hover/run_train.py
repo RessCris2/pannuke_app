@@ -33,7 +33,7 @@ from tensorboardX import SummaryWriter
 from torch.nn import DataParallel  # TODO: switch to DistributedDataParallel
 from torch.utils.data import DataLoader
 
-from config import Config
+from models.hover.config_ import Config
 from dataloader.train_loader import FileLoader
 from misc.utils import rm_n_mkdir
 from run_utils.engine import RunEngine

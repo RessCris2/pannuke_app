@@ -2,7 +2,9 @@
 
 Patch extraction script.
 """
+import sys
 
+sys.path.append("/root/autodl-tmp/pannuke_app/src/models/hover")
 import glob
 import os
 import pathlib

@@ -1,5 +1,16 @@
+import sys
+
 import torch.optim as optim
 
+sys.path.append("/root/autodl-tmp/pannuke_app/src/models/hover")
+from models.net_desc import create_model
+from models.run_desc import (
+    proc_valid_step_output,
+    train_step,
+    valid_step,
+    viz_step_output,
+)
+from models.targets import gen_targets, prep_sample
 from run_utils.callbacks.base import (
     AccumulateRawOutput,
     PeriodicSaver,
@@ -7,15 +18,11 @@ from run_utils.callbacks.base import (
     ScalarMovingAverage,
     ScheduleLr,
     TrackLr,
-    VisualizeOutput,
     TriggerEngine,
+    VisualizeOutput,
 )
 from run_utils.callbacks.logging import LoggingEpochOutput, LoggingGradient
 from run_utils.engine import Events
-
-from .targets import gen_targets, prep_sample
-from .net_desc import create_model
-from .run_desc import proc_valid_step_output, train_step, valid_step, viz_step_output
 
 
 # TODO: training config only ?
@@ -31,8 +38,7 @@ def get_config(nr_type, mode):
                     # may need more dynamic for each network
                     "net": {
                         "desc": lambda: create_model(
-                            input_ch=3, nr_types=nr_type, 
-                            freeze=True, mode=mode
+                            input_ch=3, nr_types=nr_type, freeze=True, mode=mode
                         ),
                         "optimizer": [
                             optim.Adam,
@@ -52,12 +58,15 @@ def get_config(nr_type, mode):
                         },
                         # path to load, -1 to auto load checkpoint from previous phase,
                         # None to start from scratch
-                        "pretrained": "../pretrained/ImageNet-ResNet50-Preact_pytorch.tar",
+                        "pretrained": "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/train/pretrained/ImageNet-ResNet50-Preact_pytorch.tar",
                         # 'pretrained': None,
                     },
                 },
                 "target_info": {"gen": (gen_targets, {}), "viz": (prep_sample, {})},
-                "batch_size": {"train": 16, "valid": 16,},  # engine name : value
+                "batch_size": {
+                    "train": 16,
+                    "valid": 16,
+                },  # engine name : value
                 "nr_epochs": 50,
             },
             {
@@ -65,8 +74,7 @@ def get_config(nr_type, mode):
                     # may need more dynamic for each network
                     "net": {
                         "desc": lambda: create_model(
-                            input_ch=3, nr_types=nr_type, 
-                            freeze=False, mode=mode
+                            input_ch=3, nr_types=nr_type, freeze=False, mode=mode
                         ),
                         "optimizer": [
                             optim.Adam,
@@ -90,7 +98,10 @@ def get_config(nr_type, mode):
                     },
                 },
                 "target_info": {"gen": (gen_targets, {}), "viz": (prep_sample, {})},
-                "batch_size": {"train": 4, "valid": 8,}, # batch size per gpu
+                "batch_size": {
+                    "train": 4,
+                    "valid": 8,
+                },  # batch size per gpu
                 "nr_epochs": 50,
             },
         ],
@@ -128,7 +139,9 @@ def get_config(nr_type, mode):
                 "reset_per_run": True,  # * to stop aggregating output etc. from last run
                 # callbacks are run according to the list order of the event
                 "callbacks": {
-                    Events.STEP_COMPLETED: [AccumulateRawOutput(),],
+                    Events.STEP_COMPLETED: [
+                        AccumulateRawOutput(),
+                    ],
                     Events.EPOCH_COMPLETED: [
                         # TODO: is there way to preload these ?
                         ProcessAccumulatedRawOutput(

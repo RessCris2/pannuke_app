@@ -13,7 +13,9 @@ Options:
   --gpu=<id>      Comma separated GPU list. [default: 0,1,2,3]
   --view=<dset>   Visualise images after augmentation. Choose 'train' or 'valid'.
 """
+import sys
 
+sys.path.append("/root/autodl-tmp/pannuke_app/src/models/hover")
 import cv2
 
 cv2.setNumThreads(0)
@@ -28,13 +30,9 @@ import shutil
 import matplotlib
 import numpy as np
 import torch
-from docopt import docopt
-from tensorboardX import SummaryWriter
-from torch.nn import DataParallel  # TODO: switch to DistributedDataParallel
-from torch.utils.data import DataLoader
-
 from config import Config
 from dataloader.train_loader import FileLoader
+from docopt import docopt
 from misc.utils import rm_n_mkdir
 from run_utils.engine import RunEngine
 from run_utils.utils import (
@@ -43,6 +41,10 @@ from run_utils.utils import (
     colored,
     convert_pytorch_checkpoint,
 )
+
+# from tensorboardX import SummaryWriter
+from torch.nn import DataParallel  # TODO: switch to DistributedDataParallel
+from torch.utils.data import DataLoader
 
 
 #### have to move outside because of spawn
@@ -54,7 +56,7 @@ def worker_init_fn(worker_id):
     # then dataloader with this seed will spawn worker, now we reseed the worker
     worker_info = torch.utils.data.get_worker_info()
     # to make it more random, simply switch torch.randint to np.randint
-    worker_seed = torch.randint(0, 2 ** 32, (1,))[0].cpu().item() + worker_id
+    worker_seed = torch.randint(0, 2**32, (1,))[0].cpu().item() + worker_id
     # print('Loader Worker %d Uses RNG Seed: %d' % (worker_id, worker_seed))
     # retrieve the dataset copied into this worker process
     # then set the random seed for each augmentation
@@ -73,18 +75,19 @@ class TrainManager(Config):
     ####
     def view_dataset(self, mode="train"):
         """
-        Manually change to plt.savefig or plt.show 
+        Manually change to plt.savefig or plt.show
         if using on headless machine or not
         """
         self.nr_gpus = 1
         import matplotlib.pyplot as plt
+
         check_manual_seed(self.seed)
         # TODO: what if each phase want diff annotation ?
         phase_list = self.model_config["phase_list"][0]
         target_info = phase_list["target_info"]
         prep_func, prep_kwargs = target_info["viz"]
         dataloader = self._get_datagen(2, mode, target_info["gen"])
-        for batch_data in dataloader:  
+        for batch_data in dataloader:
             # convert from Tensor to Numpy
             batch_data = {k: v.numpy() for k, v in batch_data.items()}
             viz = prep_func(batch_data, is_batch=True, **prep_kwargs)
@@ -107,9 +110,11 @@ class TrainManager(Config):
             file_list.extend(glob.glob("%s/*.npy" % dir_path))
         file_list.sort()  # to always ensure same input ordering
 
-        assert len(file_list) > 0, (
-            "No .npy found for `%s`, please check `%s` in `config.py`"
-            % (run_mode, "%s_dir_list" % run_mode)
+        assert (
+            len(file_list) > 0
+        ), "No .npy found for `%s`, please check `%s` in `config.py`" % (
+            run_mode,
+            "%s_dir_list" % run_mode,
         )
         print("Dataset %s: %d" % (run_mode, len(file_list)))
         input_dataset = FileLoader(
@@ -160,6 +165,7 @@ class TrainManager(Config):
                 nr_procs=runner_opt["nr_procs"],
                 fold_idx=fold_idx,
             )
+
         ####
         def get_last_chkpt_path(prev_phase_dir, net_name):
             stat_file_path = prev_phase_dir + "/stats.json"
@@ -250,7 +256,10 @@ class TrainManager(Config):
 
         for runner_name, runner in runner_dict.items():
             callback_info = run_engine_opt[runner_name]["callbacks"]
-            for event, callback_list, in callback_info.items():
+            for (
+                event,
+                callback_list,
+            ) in callback_info.items():
                 for callback in callback_list:
                     if callback.engine_trigger:
                         triggered_runner_name = callback.triggered_engine_name
@@ -274,7 +283,7 @@ class TrainManager(Config):
     def run(self):
         """Define multi-stage run or cross-validation or whatever in here."""
         self.nr_gpus = torch.cuda.device_count()
-        print('Detect #GPUS: %d' % self.nr_gpus)
+        print("Detect #GPUS: %d" % self.nr_gpus)
 
         phase_list = self.model_config["phase_list"]
         engine_opt = self.model_config["run_engine"]
