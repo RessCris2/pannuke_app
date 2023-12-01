@@ -41,8 +41,7 @@ from run_utils.utils import (
     colored,
     convert_pytorch_checkpoint,
 )
-
-# from tensorboardX import SummaryWriter
+from tensorboardX import SummaryWriter
 from torch.nn import DataParallel  # TODO: switch to DistributedDataParallel
 from torch.utils.data import DataLoader
 

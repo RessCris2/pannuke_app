@@ -58,10 +58,10 @@ class Config(object):
 
         # paths to training and validation patches
         self.train_dir_list = [
-            "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/dataset/training_data/consep/consep/train/540x540_164x164"
+            "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/train/dataset/training_data/consep/consep/train/540x540_164x164"
         ]
         self.valid_dir_list = [
-            "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/dataset/training_data/consep/consep/valid/540x540_164x164"
+            "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/train/dataset/training_data/consep/consep/valid/540x540_164x164"
         ]
 
         self.shape_info = {
@@ -78,5 +78,5 @@ class Config(object):
         # * parsing config to the running state and set up associated variables
         self.dataset = get_dataset(self.dataset_name)
 
-        module = importlib.import_module("models.%s.opt" % model_name)
+        module = importlib.import_module("opt")
         self.model_config = module.get_config(nr_type, model_mode)
