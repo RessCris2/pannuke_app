@@ -65,7 +65,7 @@ def parse_args():
     parser.add_argument("--local_rank", "--local-rank", type=int, default=0)
     args = parser.parse_args(['config.py',
                               '--work-dir', 'work-dir',
-                              '--resume', 'work-dir/epoch_1.pth',
+                              '--resume', 'work-dir/epoch_10.pth',
                               '--auto-scale-lr',
                               '--amp',])
 
