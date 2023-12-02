@@ -9,6 +9,7 @@ test:   # 20288 of 40670 images, submit to https://competitions.codalab.org/comp
 # val_labels: projects/consep/yolov8/train/coco_converted/labels/test_annotations
 
 # Classes
+
 names:
   0: Inflammatory
   1: Healthy_epithelial

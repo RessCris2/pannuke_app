@@ -19,6 +19,7 @@ from functools import reduce
 from importlib import import_module
 from multiprocessing import Lock, Pool
 
+# import convert_format
 import cv2
 import numpy as np
 import psutil
@@ -26,6 +27,10 @@ import scipy.io as sio
 import torch
 import torch.utils.data as data
 import tqdm
+from skimage import color
+
+# from .. import convert_format
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from dataloader.infer_loader import SerializeArray, SerializeFileList
 from misc.utils import (
     color_deconvolution,
@@ -36,22 +41,21 @@ from misc.utils import (
     rm_n_mkdir,
 )
 from misc.viz_utils import colorize, visualize_instances_dict
-from skimage import color
 
-import convert_format
+# from . import base
 from . import base
 
 
 ####
 def _prepare_patching(img, window_size, mask_size, return_src_top_corner=False):
     """Prepare patch information for tile processing.
-    
+
     Args:
         img: original input image
         window_size: input patch size
         mask_size: output patch size
         return_src_top_corner: whether to return coordiante information for top left corner of img
-        
+
     """
 
     win_size = window_size
@@ -96,10 +100,14 @@ def _prepare_patching(img, window_size, mask_size, return_src_top_corner=False):
 
 ####
 def _post_process_patches(
-    post_proc_func, post_proc_kwargs, patch_info, image_info, overlay_kwargs,
+    post_proc_func,
+    post_proc_kwargs,
+    patch_info,
+    image_info,
+    overlay_kwargs,
 ):
     """Apply post processing to patches.
-    
+
     Args:
         post_proc_func: post processing function to use
         post_proc_kwargs: keyword arguments used in post processing function
@@ -159,17 +167,17 @@ class InferManager(base.InferManager):
         patterning = lambda x: re.sub("([\[\]])", "[\\1]", x)
         file_path_list = glob.glob(patterning("%s/*" % self.input_dir))
         file_path_list.sort()  # ensure same order
-        assert len(file_path_list) > 0, 'Not Detected Any Files From Path'
-        
-        rm_n_mkdir(self.output_dir + '/json/')
-        rm_n_mkdir(self.output_dir + '/mat/')
-        rm_n_mkdir(self.output_dir + '/overlay/')
+        assert len(file_path_list) > 0, "Not Detected Any Files From Path"
+
+        rm_n_mkdir(self.output_dir + "/json/")
+        rm_n_mkdir(self.output_dir + "/mat/")
+        rm_n_mkdir(self.output_dir + "/overlay/")
         if self.save_qupath:
             rm_n_mkdir(self.output_dir + "/qupath/")
 
         def proc_callback(results):
             """Post processing callback.
-            
+
             Output format is implicit assumption, taken from `_post_process_patches`
 
             """
@@ -177,18 +185,18 @@ class InferManager(base.InferManager):
 
             nuc_val_list = list(inst_info_dict.values())
             # need singleton to make matlab happy
-            nuc_uid_list = np.array(list(inst_info_dict.keys()))[:,None]
-            nuc_type_list = np.array([v["type"] for v in nuc_val_list])[:,None]
+            nuc_uid_list = np.array(list(inst_info_dict.keys()))[:, None]
+            nuc_type_list = np.array([v["type"] for v in nuc_val_list])[:, None]
             nuc_coms_list = np.array([v["centroid"] for v in nuc_val_list])
 
             mat_dict = {
-                "inst_map" : pred_inst,
-                "inst_uid" : nuc_uid_list,
+                "inst_map": pred_inst,
+                "inst_uid": nuc_uid_list,
                 "inst_type": nuc_type_list,
-                "inst_centroid": nuc_coms_list
+                "inst_centroid": nuc_coms_list,
             }
-            if self.nr_types is None: # matlab does not have None type array
-                mat_dict.pop("inst_type", None) 
+            if self.nr_types is None:  # matlab does not have None type array
+                mat_dict.pop("inst_type", None)
 
             if self.save_raw_map:
                 mat_dict["raw_map"] = pred_map
@@ -203,9 +211,9 @@ class InferManager(base.InferManager):
                 nuc_type_list = np.array([v["type"] for v in nuc_val_list])
                 nuc_coms_list = np.array([v["centroid"] for v in nuc_val_list])
                 save_path = "%s/qupath/%s.tsv" % (self.output_dir, img_name)
-                convert_format.to_qupath(
-                    save_path, nuc_coms_list, nuc_type_list, self.type_info_dict
-                )
+                # convert_format.to_qupath(
+                #     save_path, nuc_coms_list, nuc_type_list, self.type_info_dict
+                # )
 
             save_path = "%s/json/%s.json" % (self.output_dir, img_name)
             self.__save_json(save_path, inst_info_dict, None)
@@ -234,7 +242,6 @@ class InferManager(base.InferManager):
             proc_pool = ProcessPoolExecutor(self.nr_post_proc_workers)
 
         while len(file_path_list) > 0:
-
             hardware_stats = psutil.virtual_memory()
             available_ram = getattr(hardware_stats, "available")
             available_ram = int(available_ram * self.mem_usage)
@@ -385,4 +392,3 @@ class InferManager(base.InferManager):
                         file_path = proc_callback(future.result())
                         log_info("Done Assembling %s" % file_path)
         return
-
