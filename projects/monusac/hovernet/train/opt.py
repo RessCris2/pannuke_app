@@ -3,6 +3,14 @@ import sys
 import torch.optim as optim
 
 sys.path.append("/root/autodl-tmp/pannuke_app/src/models/hover")
+from models.hovernet.net_desc import create_model
+from models.hovernet.run_desc import (
+    proc_valid_step_output,
+    train_step,
+    valid_step,
+    viz_step_output,
+)
+from models.hovernet.targets import gen_targets, prep_sample
 from run_utils.callbacks.base import (
     AccumulateRawOutput,
     PeriodicSaver,
@@ -15,15 +23,6 @@ from run_utils.callbacks.base import (
 )
 from run_utils.callbacks.logging import LoggingEpochOutput, LoggingGradient
 from run_utils.engine import Events
-
-from models.hovernet.net_desc import create_model
-from models.hovernet.run_desc import (
-    proc_valid_step_output,
-    train_step,
-    valid_step,
-    viz_step_output,
-)
-from models.hovernet.targets import gen_targets, prep_sample
 
 
 # TODO: training config only ?
@@ -100,8 +99,8 @@ def get_config(nr_type, mode):
                 },
                 "target_info": {"gen": (gen_targets, {}), "viz": (prep_sample, {})},
                 "batch_size": {
-                    "train": 4,
-                    "valid": 8,
+                    "train": 16,
+                    "valid": 16,
                 },  # batch size per gpu
                 "nr_epochs": 50,
             },

@@ -58,10 +58,10 @@ class Config(object):
 
         # paths to training and validation patches
         self.train_dir_list = [
-            "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/train/dataset/training_data/consep/consep/train/540x540_164x164"
+            "/root/autodl-tmp/pannuke_app/projects/monusac/hovernet/train/dataset/training_data/monusac/monusac/train/350x350_164x164"
         ]
         self.valid_dir_list = [
-            "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/train/dataset/training_data/consep/consep/valid/540x540_164x164"
+            "/root/autodl-tmp/pannuke_app/projects/monusac/hovernet/train/dataset/training_data/monusac/monusac/valid/350x350_164x164"
         ]
 
         self.shape_info = {
