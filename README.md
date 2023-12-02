@@ -138,3 +138,10 @@ hovernet
 - 计算指标(yes)
 
 为了适应数据传递， consep 的load_ann 是不是要改为 process 之后的数据方式？
+
+## 问题
+- monusac 数据集应该有点问题
+img_path = '/root/autodl-tmp/pannuke_app/datasets/processed/MoNuSAC/train/imgs/TCGA-D8-A1X5-01Z-00-DX2_4.png'
+seg_mask_path = '/root/autodl-tmp/pannuke_app/datasets/processed/MoNuSAC/train/seg_mask/TCGA-D8-A1X5-01Z-00-DX2_4.png'
+出现标签值大于4.
+按道理只有 test 中才有可能出现.

@@ -46,8 +46,7 @@ model = dict(
         num_classes=4,
         norm_cfg=dict(type='SyncBN', requires_grad=True),
         align_corners=False,
-        loss_decode=dict(
-            type='CrossEntropyLoss', use_sigmoid=False, loss_weight=1.0)),
+        loss_decode=dict(type='MyLoss', use_sigmoid=False, loss_weight=1.0)),
     auxiliary_head=dict(
         type='FCNHead',
         in_channels=128,
@@ -59,12 +58,11 @@ model = dict(
         num_classes=4,
         norm_cfg=dict(type='SyncBN', requires_grad=True),
         align_corners=False,
-        loss_decode=dict(
-            type='CrossEntropyLoss', use_sigmoid=False, loss_weight=0.4)),
+        loss_decode=dict(type='MyLoss', use_sigmoid=False, loss_weight=0.4)),
     train_cfg=dict(),
     test_cfg=dict(mode='slide', crop_size=(256, 256), stride=(170, 170)))
-dataset_type = 'CoNSePDataset'
-data_root = '/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/'
+dataset_type = 'HRFDataset'
+data_root = '/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP'
 img_scale = (2336, 3504)
 crop_size = (256, 256)
 train_pipeline = [
@@ -139,10 +137,10 @@ train_dataloader = dict(
         type='RepeatDataset',
         times=40000,
         dataset=dict(
-            type='CoNSePDataset',
-            data_root='/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/',
+            type='HRFDataset',
+            data_root='/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP',
             data_prefix=dict(
-                img_path='train/imgs', seg_map_path='train/seg_mask'),
+                img_path='train/imgs', seg_map_path='train/dist_map'),
             pipeline=[
                 dict(type='LoadImageFromFile'),
                 dict(type='LoadAnnotations'),
@@ -159,11 +157,6 @@ train_dataloader = dict(
                 dict(type='PhotoMetricDistortion'),
                 dict(type='PackSegInputs')
             ],
-            metainfo=dict(
-                classes=('Inflammatory', 'Healthy_epithelial', 'Epithelial',
-                         'Spindle-shaped'),
-                palette=[(120, 120, 60), (20, 120, 160), (72, 100, 60),
-                         (111, 67, 60)]),
             reduce_zero_label=True)))
 val_dataloader = dict(
     batch_size=1,
@@ -171,20 +164,15 @@ val_dataloader = dict(
     persistent_workers=True,
     sampler=dict(type='DefaultSampler', shuffle=False),
     dataset=dict(
-        type='CoNSePDataset',
-        data_root='/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/',
-        data_prefix=dict(img_path='test/imgs', seg_map_path='test/seg_mask'),
+        type='HRFDataset',
+        data_root='/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP',
+        data_prefix=dict(img_path='test/imgs', seg_map_path='test/dist_map'),
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(type='Resize', scale=(256, 256), keep_ratio=True),
             dict(type='LoadAnnotations'),
             dict(type='PackSegInputs')
         ],
-        metainfo=dict(
-            classes=('Inflammatory', 'Healthy_epithelial', 'Epithelial',
-                     'Spindle-shaped'),
-            palette=[(120, 120, 60), (20, 120, 160), (72, 100, 60),
-                     (111, 67, 60)]),
         reduce_zero_label=True))
 test_dataloader = dict(
     batch_size=1,
@@ -192,20 +180,15 @@ test_dataloader = dict(
     persistent_workers=True,
     sampler=dict(type='DefaultSampler', shuffle=False),
     dataset=dict(
-        type='CoNSePDataset',
-        data_root='/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/',
-        data_prefix=dict(img_path='test/imgs', seg_map_path='test/seg_mask'),
+        type='HRFDataset',
+        data_root='/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP',
+        data_prefix=dict(img_path='test/imgs', seg_map_path='test/dist_map'),
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(type='Resize', scale=(256, 256), keep_ratio=True),
             dict(type='LoadAnnotations'),
             dict(type='PackSegInputs')
         ],
-        metainfo=dict(
-            classes=('Inflammatory', 'Healthy_epithelial', 'Epithelial',
-                     'Spindle-shaped'),
-            palette=[(120, 120, 60), (20, 120, 160), (72, 100, 60),
-                     (111, 67, 60)]),
         reduce_zero_label=True))
 val_evaluator = dict(type='IoUMetric', iou_metrics=['mIoU'])
 test_evaluator = dict(type='IoUMetric', iou_metrics=['mIoU'])

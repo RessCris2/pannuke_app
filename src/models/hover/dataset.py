@@ -233,8 +233,12 @@ class MoNuSAC(__AbstractDataset):
 
         if with_type:
             ann_type = cv2.imread(seg_mask_path, 0)
+            if np.max(ann_type) > 4:
+                print("ann max > 4")
+                ann_type = np.where(ann_type > 4, 0, ann_type)
             ann = np.dstack([ann_inst, ann_type])
             ann = ann.astype("int32")
+
             return ann
         else:
             ann = np.expand_dims(ann_inst, -1)

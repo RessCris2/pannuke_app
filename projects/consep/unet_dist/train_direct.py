@@ -1,9 +1,13 @@
 import os
+import sys
 
 from mmengine import Config
 from mmengine.runner import Runner
 from mmseg.datasets import BaseSegDataset
 from mmseg.registry import DATASETS
+
+sys.path.append("/root/autodl-tmp/pannuke_app/src/models/unet_dist/")
+from my_loss import MyLoss, my_loss
 
 
 @DATASETS.register_module()
@@ -22,15 +26,17 @@ class CoNSePDataset(BaseSegDataset):
 
 
 if __name__ == "__main__":
-    config_path = "config_consep.py"
+    config_path = "config.py"
     cfg = Config.fromfile(config_path)
+    cfg.work_dir = "work-dir"
+
     print(f"Config:\n{cfg.pretty_text}")
     # Modify dataset type and path
     # cfg.dataset_type = "PanNukeDataset"
     # cfg.data_root = "/root/autodl-tmp/datasets/pannuke/coco_format/"
     cfg.train_dataloader.batch_size = 16
     # Set up working dir to save files and logs.
-    cfg.work_dir = "work-dir"
+
     runner = Runner.from_cfg(cfg)
 
     # start training

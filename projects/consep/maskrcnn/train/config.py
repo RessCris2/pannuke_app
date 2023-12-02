@@ -1,14 +1,4 @@
-import os.path as osp
-import platform
 
-# from mmengine.config import read_base
-
-# if osp.exists("/home/pannuke_app/"):
-#     _base_ = ["/home/pannuke_app/src/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"]
-# #     data_root = "/home/pannuke_app/train/datasets/CoNSeP/"
-# else:
-#     _base_ = ["/root/autodl-tmp/pannuke_app/src/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"]
-#     data_root = "/root/autodl-tmp/pannuke_app/train/datasets/CoNSeP/"
 _base_ = [
     "/root/autodl-tmp/pannuke_app/src/models/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
 ]
@@ -44,8 +34,8 @@ test_pipeline = [
 ]
 
 train_dataloader = dict(
-    batch_size=4,
-    num_workers=4,
+    batch_size=16,
+    num_workers=8,
     persistent_workers=True,
     sampler=dict(type="DefaultSampler", shuffle=True),
     batch_sampler=dict(type="AspectRatioBatchSampler"),
@@ -62,8 +52,8 @@ train_dataloader = dict(
     ),
 )
 val_dataloader = dict(
-    batch_size=1,
-    num_workers=1,
+    batch_size=16,
+    num_workers=8,
     persistent_workers=True,
     drop_last=False,
     sampler=dict(type="DefaultSampler", shuffle=False),
@@ -87,7 +77,7 @@ val_evaluator = dict(
     metric=["bbox", "segm"],
     format_only=False,
     backend_args=backend_args,
-    outfile_prefix="/root/autodl-tmp/pannuke_app/projects/consep/maskrcnn/train/work_dirs/val",
+    outfile_prefix="work_dirs/val",
 )
 test_evaluator = val_evaluator = dict(
     type="CocoMetric",
@@ -95,7 +85,7 @@ test_evaluator = val_evaluator = dict(
     metric=["bbox", "segm"],
     format_only=False,
     backend_args=backend_args,
-    outfile_prefix="/root/autodl-tmp/pannuke_app/projects/consep/maskrcnn/train/work_dirs/test",
+    outfile_prefix="work_dirs/test",
 )
 
 
@@ -104,10 +94,12 @@ model = dict(
 )
 
 
-evaluation = dict(interval=1, metric="bbox", options={"maxDets": [100, 300, 1000]})
+evaluation = dict(interval=1, metric="segm", options={"maxDets": [100, 300, 1000]})
 
+load_from = "work-dir/epch_6.pth"
+resume = True
 # if osp.exists("/home/pannuke_app/"):
 
-if osp.exists("/root/autodl-tmp"):
-    load_from = "/root/autodl-tmp/pannuke_app/train/mask_rcnn/consep/model_data/old/epoch_13.pth"
-    resume = False
+# if osp.exists("/root/autodl-tmp"):
+#     load_from = "/root/autodl-tmp/pannuke_app/train/mask_rcnn/consep/model_data/old/epoch_13.pth"
+#     resume = False
