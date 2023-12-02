@@ -11,6 +11,8 @@ hover/dataset/
 hover_old/
 **/train/dataset/
 **/train/model_data/
+ultralytics/
+**/coco_converted/
 # models dir
 **/model_data/
 pred_data/

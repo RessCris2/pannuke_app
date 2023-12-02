@@ -45,9 +45,13 @@ src:
                     Set path where checkpoints will be saved in config.py
                     Set path to pretrained Preact-ResNet50 weights in models/hovernet/opt.py. Download the weights here.
                     Modify hyperparameters, including number of epochs and learning rate in models/hovernet/opt.py.
+                - 01 训练时会自动读取 00 与训练吗？
     - UNet
     - UNet-dist
-    - YOLO
+    - YOLOv8
+        pip install ultralytics
+        - 训练之前要先将数据集转换为 yolo 格式
+            
 
 - evaluation: 评估相关
 

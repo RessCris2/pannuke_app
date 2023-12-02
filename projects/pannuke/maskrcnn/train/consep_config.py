@@ -87,7 +87,7 @@ val_evaluator = dict(
     metric=["bbox", "segm"],
     format_only=False,
     backend_args=backend_args,
-    outfile_prefix="/root/autodl-tmp/pannuke_app/projects/consep/maskrcnn/train/work_dirs/val",
+    outfile_prefix="/root/autodl-tmp/pannuke_app/train/mask_rcnn/consep/work_dirs/val",
 )
 test_evaluator = val_evaluator = dict(
     type="CocoMetric",
@@ -95,7 +95,7 @@ test_evaluator = val_evaluator = dict(
     metric=["bbox", "segm"],
     format_only=False,
     backend_args=backend_args,
-    outfile_prefix="/root/autodl-tmp/pannuke_app/projects/consep/maskrcnn/train/work_dirs/test",
+    outfile_prefix="/root/autodl-tmp/pannuke_app/train/mask_rcnn/consep/work_dirs/test",
 )
 
 
