@@ -63,16 +63,19 @@ def parse_args():
     # will pass the `--local-rank` parameter to `tools/train.py` instead
     # of `--local_rank`.
     parser.add_argument("--local_rank", "--local-rank", type=int, default=0)
-    # args = parser.parse_args(['/root/autodl-tmp/viax/train/mask_rcnn/consep/consep_config.py',
-    #                           '--work-dir', '/root/autodl-tmp/viax/train/model_data/consep/mask_rcnn/'])
+    args = parser.parse_args(['config.py',
+                              '--work-dir', 'work-dir',
+                              '--resume', 'work-dir/epoch_1.pth',
+                              '--auto-scale-lr',
+                              '--amp',])
 
-    args = parser.parse_args(
-        [
-            "consep_config.py",
-            "--work-dir",
-            "model_data",
-        ]
-    )
+    # args = parser.parse_args(
+    #     [
+    #         "config.py",
+    #         "--work-dir",
+    #         "model_data",
+    #     ]
+    # )
 
     if "LOCAL_RANK" not in os.environ:
         os.environ["LOCAL_RANK"] = str(args.local_rank)
