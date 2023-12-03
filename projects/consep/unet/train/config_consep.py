@@ -19,8 +19,8 @@ metainfo = {
 img_suffix = ".png"
 seg_map_suffix = ".png"
 
-img_scale = (2336, 3504)
-crop_size = (256, 256)
+img_scale = (1024, 1024)
+crop_size = (900, 900)
 train_pipeline = [
     dict(type="LoadImageFromFile"),
     dict(type="LoadAnnotations"),
@@ -32,7 +32,7 @@ train_pipeline = [
 ]
 test_pipeline = [
     dict(type="LoadImageFromFile"),
-    dict(type="Resize", scale=(256, 256), keep_ratio=True),
+    dict(type="Resize", scale=img_scale, keep_ratio=True),
     # add loading annotation after ``Resize`` because ground truth
     # does not need to do resize data transform
     dict(type="LoadAnnotations"),

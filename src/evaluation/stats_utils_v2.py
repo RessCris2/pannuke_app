@@ -516,7 +516,7 @@ def eveluate_one_pic_class(
     return acc, f1
 
 
-# @fn_time
+@fn_time
 def eveluate_one_pic_inst(true_masks, pred_masks):
     if isinstance(true_masks, dict):
         true_masks = true_masks["masks"]
@@ -524,16 +524,16 @@ def eveluate_one_pic_inst(true_masks, pred_masks):
     true_id_list = list(range(len(true_masks)))
     pred_id_list = list(range(len(pred_masks)))
     metrics = []
-    aji = get_fast_aji(true_id_list, true_masks, pred_id_list, pred_masks)
+    # aji = get_fast_aji(true_id_list, true_masks, pred_id_list, pred_masks)
     aji_plus = get_fast_aji_plus(true_id_list, true_masks, pred_id_list, pred_masks)
     # dice = get_dice_2(true_id_list, true_masks, pred_id_list, pred_masks)
     dice = get_fast_dice_2(true_id_list, true_masks, pred_id_list, pred_masks)
-    pq = get_fast_pq(true_id_list, true_masks, pred_id_list, pred_masks)
+    # pq = get_fast_pq(true_id_list, true_masks, pred_id_list, pred_masks)
 
     metrics.append(dice)
-    metrics.append(aji)
+    # metrics.append(aji)
     metrics.append(aji_plus)
-    metrics.append(pq[0])
-    metrics.append(pq[1])
-    metrics.append(pq[2])
+    # metrics.append(pq[0])
+    # metrics.append(pq[1])
+    # metrics.append(pq[2])
     return metrics

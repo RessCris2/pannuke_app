@@ -1,4 +1,7 @@
 
+# _base_ = [
+#     "/root/autodl-tmp/pannuke_app/src/models/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
+# ]
 _base_ = [
     "/root/autodl-tmp/pannuke_app/src/models/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
 ]
@@ -18,7 +21,7 @@ train_pipeline = [
     dict(type="LoadImageFromFile", backend_args=backend_args),
     dict(type="LoadAnnotations", with_bbox=True, with_mask=True),
     dict(type="Resize", scale=(1333, 800), keep_ratio=True),
-    dict(type="RandomCrop", crop_size=(256, 256)),
+    # dict(type="RandomCrop", crop_size=(640, 256)),
     dict(type="RandomFlip", prob=0.5),
     dict(type="PackDetInputs"),
 ]
@@ -34,8 +37,8 @@ test_pipeline = [
 ]
 
 train_dataloader = dict(
-    batch_size=16,
-    num_workers=8,
+    batch_size=2,
+    num_workers=2,
     persistent_workers=True,
     sampler=dict(type="DefaultSampler", shuffle=True),
     batch_sampler=dict(type="AspectRatioBatchSampler"),
@@ -52,8 +55,8 @@ train_dataloader = dict(
     ),
 )
 val_dataloader = dict(
-    batch_size=16,
-    num_workers=8,
+    batch_size=2,
+    num_workers=2,
     persistent_workers=True,
     drop_last=False,
     sampler=dict(type="DefaultSampler", shuffle=False),
@@ -66,7 +69,7 @@ val_dataloader = dict(
         test_mode=True,
         pipeline=test_pipeline,
         backend_args=backend_args,
-        indices=3,
+        # indices=3,
     ),
 )
 test_dataloader = val_dataloader
@@ -96,10 +99,19 @@ model = dict(
 
 evaluation = dict(interval=1, metric="segm", options={"maxDets": [100, 300, 1000]})
 
-load_from = "work-dir/epch_6.pth"
-resume = True
+# load_from = "work-dir/epch_6.pth"
+# resume = True
 # if osp.exists("/home/pannuke_app/"):
 
 # if osp.exists("/root/autodl-tmp"):
 #     load_from = "/root/autodl-tmp/pannuke_app/train/mask_rcnn/consep/model_data/old/epoch_13.pth"
 #     resume = False
+train_cfg = dict(type="EpochBasedTrainLoop", max_epochs=500, val_interval=1)
+default_hooks = dict(
+    timer=dict(type="IterTimerHook"),
+    logger=dict(type="LoggerHook", interval=1),
+    param_scheduler=dict(type="ParamSchedulerHook"),
+    checkpoint=dict(type="CheckpointHook", interval=1),
+    sampler_seed=dict(type="DistSamplerSeedHook"),
+)
+    # visualization=dict(  # 用户可视化验证和测试结果

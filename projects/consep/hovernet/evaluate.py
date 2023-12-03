@@ -11,8 +11,8 @@ from pycocotools.coco import COCO
 from pycocotools.cocoeval import COCOeval
 
 sys.path.append("/root/autodl-tmp/pannuke_app/")
-from hover.compute_stats import run_nuclei_inst_stat
 from src.evaluation.stats_utils_v2 import eveluate_one_pic_inst
+from src.models.hover.compute_stats import run_nuclei_inst_stat
 
 # metrics = run_nuclei_inst_stat(pred_dir, true_dir, print_img_stats=False)
 # print(metrics)
@@ -34,7 +34,13 @@ def convert_mat2coco(mat_path, img_id):
         inst_mask = inst_map == inst_uid
         category_id = json_label[inst_uid]["type"]
         score = json_label[inst_uid]["type_prob"]
-        bbox = json_label[inst_uid]["bbox"]
+        # inst_bbox = np.array()
+        # 改为 x,y,w,h
+
+        [[rmin, cmin], [rmax, cmax]] = json_label[inst_uid]["bbox"]
+        w = cmax - cmin
+        h = rmax - rmin
+        bbox = [cmin, rmin, w, h]
 
         item = {}
         item.update({"bbox": bbox})
@@ -106,18 +112,19 @@ def calculate_map(ann_file, pred_result_dir):
         items = convert_mat2coco(file_name, image["id"])
         results.extend(items)
     pred = coco_api.loadRes(results)
-    coco_eval = COCOeval(coco_api, pred, iouType="segm")
+    coco_eval = COCOeval(coco_api, pred, iouType="bbox")
+    coco_eval.params.maxDets = [100, 500, 1000]
     coco_eval.evaluate()
     coco_eval.accumulate()
     coco_eval.summarize()
 
 
 if __name__ == "__main__":
-    pred_dir = (
-        "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/predict/pred_data/mat"
-    )
+    pred_dir = "predict/pred_data/mat"
     true_dir = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/test/inst"
-    # metrics = evaluate_dir(true_dir, pred_dir)
+    # metrics = evaluate_pq(true_dir, pred_dir)
     # print(metrics)
-    mat_path = "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/predict/pred_data/mat/test_12.mat"
-    convert_mat2coco(mat_path)
+    # mat_path = "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/predict/pred_data/mat/test_12.mat"
+    # convert_mat2coco(mat_path)
+    ann_file = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/test/test_annotations.json"
+    calculate_map(ann_file, pred_dir)

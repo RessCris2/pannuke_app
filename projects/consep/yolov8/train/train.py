@@ -38,14 +38,22 @@ from ultralytics import YOLO
 # trainer = detect.DetectionTrainer(overrides=overrides)
 # trainer.train()
 
+model = YOLO("yolov5n6u.pt")
+model.train(data="consep.yaml", epochs=100, batch=2, imgsz=1000)
 
 # Load a model
 # model = YOLO('yolov8n-seg.yaml')  # build a new model from YAML
-model = YOLO("yolov8n-seg.pt")  # load a pretrained model (recommended for training)
-# model = YOLO("yolov8n-seg.yaml").load(
-# "yolov8n.pt"
-# )  # build from YAML and transfer weights
+# model = YOLO("yolov8n-seg.pt")  # load a pretrained model (recommended for training)
+# # model = YOLO("yolov8n-seg.yaml").load(
+# # "yolov8n.pt"
+# # )  # build from YAML and transfer weights
 
-# Train the model
-results = model.train(data="consep.yaml", epochs=100, imgsz=640)
-print("x")
+# # Train the model
+# results = model.train(data="consep.yaml", epochs=500, batch=2, imgsz=1024)
+# print("x")
+
+
+# model = YOLO(
+#     "/root/autodl-tmp/pannuke_app/train/ultralytics/runs/segment/train9/weights/last.pt"
+# )
+# model.train(resume=True)
