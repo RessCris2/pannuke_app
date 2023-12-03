@@ -8,12 +8,18 @@ _base_ = [
 # data_root = "/root/autodl-tmp/pannuke_app/train/datasets/CoNSeP/"
 
 # consep
-dataset_type = "CoNSePDataset"
-data_root = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/"
+dataset_type = "PanNukeDataset"
+data_root = "/root/autodl-tmp/pannuke_app/datasets/processed/PanNuke/"
 # data_root = "/home/pannuke_app/train/datasets/CoNSeP/"
 metainfo = {
-    "classes": ("Inflammatory", "Healthy_epithelial", "Epithelial", "Spindle-shaped"),
-    "palette": [(120, 120, 60), (20, 120, 160), (72, 100, 60), (111, 67, 60)],
+    "classes": ("Neoplastic", "Inflammatory", "Connective", "Dead", "Epithelial"),
+    "palette": [
+        (200, 10, 60),
+        (120, 120, 60),
+        (20, 120, 160),
+        (72, 100, 60),
+        (111, 67, 60),
+    ],
 }
 
 img_suffix = ".png"
@@ -55,8 +61,8 @@ tta_pipeline = [
     ),
 ]
 train_dataloader = dict(
-    batch_size=4,
-    num_workers=4,
+    batch_size=32,
+    num_workers=8,
     persistent_workers=True,
     sampler=dict(type="InfiniteSampler", shuffle=True),
     dataset=dict(
@@ -73,8 +79,8 @@ train_dataloader = dict(
     ),
 )
 val_dataloader = dict(
-    batch_size=1,
-    num_workers=4,
+    batch_size=32,
+    num_workers=8,
     persistent_workers=True,
     sampler=dict(type="DefaultSampler", shuffle=False),
     dataset=dict(
@@ -93,4 +99,4 @@ test_evaluator = val_evaluator
 
 
 # -----------------------------------------------------------------------------
-model = dict(decode_head=dict(num_classes=4), auxiliary_head=dict(num_classes=4))
+model = dict(decode_head=dict(num_classes=5), auxiliary_head=dict(num_classes=5))
