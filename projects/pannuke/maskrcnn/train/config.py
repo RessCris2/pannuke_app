@@ -1,7 +1,11 @@
 
 _base_ = [
     # "/root/autodl-tmp/pannuke_app/src/models/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
+<<<<<<< HEAD
     "/root/mmlab/mmdetection-main/configs/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
+=======
+      "/root/mmlab/mmdetection-main/configs/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
+>>>>>>> f60b67f591304810cd541205067906d2ba9b107e
 ]
 data_root = "/root/autodl-tmp/pannuke_app/datasets/processed/PanNuke/"
 

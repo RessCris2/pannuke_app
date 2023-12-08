@@ -64,9 +64,9 @@ def parse_args():
     # of `--local_rank`.
     parser.add_argument("--local_rank", "--local-rank", type=int, default=0)
     args = parser.parse_args(['config.py',
-                              '--work-dir', 'work-dir',
-                              '--resume', 'work-dir/epoch_10.pth',
-                              '--auto-scale-lr',
+                              '--work-dir', '/root/tf-logs/consep_maskrcnn/',
+                            #   '--resume', 'work-dir/epoch_10.pth',
+                            #   '--auto-scale-lr',
                               '--amp',])
 
     # args = parser.parse_args(

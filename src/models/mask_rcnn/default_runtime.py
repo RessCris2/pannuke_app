@@ -22,9 +22,9 @@ env_cfg = dict(
 )
 
 vis_backends = [
-    # dict(type="LocalVisBackend"),
+    dict(type="LocalVisBackend"),
     # dict(type="TensorboardVisBackend"),
-    dict(type="WandbVisBackend"),
+    # dict(type="WandbVisBackend"),
 ]
 visualizer = dict(
     type="DetLocalVisualizer",
