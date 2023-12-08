@@ -1,6 +1,7 @@
 
 _base_ = [
-    "/root/autodl-tmp/pannuke_app/src/models/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
+    # "/root/autodl-tmp/pannuke_app/src/models/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
+    "/root/mmlab/mmdetection-main/configs/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
 ]
 data_root = "/root/autodl-tmp/pannuke_app/datasets/processed/PanNuke/"
 
@@ -17,19 +18,19 @@ backend_args = None
 train_pipeline = [
     dict(type="LoadImageFromFile", backend_args=backend_args),
     dict(type="LoadAnnotations", with_bbox=True, with_mask=True),
-    dict(type="Resize", scale=(1333, 800), keep_ratio=True),
-    dict(type="RandomCrop", crop_size=(256, 256)),
+    dict(type="Resize", scale=(256, 256), keep_ratio=True),
+    # dict(type="RandomCrop", crop_size=(256, 256)),
     dict(type="RandomFlip", prob=0.5),
     dict(type="PackDetInputs"),
 ]
 test_pipeline = [
     dict(type="LoadImageFromFile", backend_args=backend_args),
     # dict(type="LoadAnnotations", with_bbox=True, with_mask=True),
-    dict(type="Resize", scale=(1333, 800), keep_ratio=True),
+    dict(type="Resize", scale=(256, 256), keep_ratio=True),
     dict(type="LoadAnnotations", with_bbox=True, with_mask=True),
     dict(
         type="PackDetInputs",
-        meta_keys=("img_id", "img_path", "ori_shape", "img_shape", "scale_factor"),
+        meta_keys=("img_id", "img_path", "ori_shape", "img_shape","scale_factor"),
     ),
 ]
 
@@ -48,7 +49,7 @@ train_dataloader = dict(
         filter_cfg=dict(filter_empty_gt=True, min_size=32),
         pipeline=train_pipeline,
         backend_args=backend_args,
-        # indices=2,
+        # indices=200,
     ),
 )
 val_dataloader = dict(
@@ -66,7 +67,7 @@ val_dataloader = dict(
         test_mode=True,
         pipeline=test_pipeline,
         backend_args=backend_args,
-        indices=3,
+        # indices=3,
     ),
 )
 test_dataloader = val_dataloader
@@ -94,7 +95,7 @@ model = dict(
 )
 
 
-evaluation = dict(interval=10, metric="segm", options={"maxDets": [100, 300, 1000]})
+evaluation = dict(interval=10, metric="segm", options={"maxDets": [10, 30, 100]})
 
 # if osp.exists("/home/pannuke_app/"):
 
