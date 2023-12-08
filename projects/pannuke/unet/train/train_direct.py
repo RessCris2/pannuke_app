@@ -7,13 +7,14 @@ from mmseg.registry import DATASETS
 
 
 @DATASETS.register_module()
-class CoNSePDataset(BaseSegDataset):
-    classes = ("Inflammatory", "Healthy_epithelial", "Epithelial", "Spindle-shaped")
+class PanNukeDataset(BaseSegDataset):
+    classes = ("Neoplastic", "Inflammatory", "Connective", "Dead", "Epithelial")
     palette = [
-        [78, 89, 101],
-        [120, 69, 125],
-        [53, 125, 34],
-        [0, 11, 123],
+        (200, 10, 60),
+        (120, 120, 60),
+        (20, 120, 160),
+        (72, 100, 60),
+        (111, 67, 60),
     ]
     METAINFO = dict(classes=classes, palette=palette)
 
@@ -22,18 +23,16 @@ class CoNSePDataset(BaseSegDataset):
 
 
 if __name__ == "__main__":
-    if os.path.exists(""):
-        config_path = "/home/pannuke_app/train/unet/consep/config_consep.py"
-    else:
-        config_path = "/root/autodl-tmp/pannuke_app/train/unet/consep/config_consep.py"
+    config_path = "config.py"
     cfg = Config.fromfile(config_path)
     print(f"Config:\n{cfg.pretty_text}")
     # Modify dataset type and path
     # cfg.dataset_type = "PanNukeDataset"
     # cfg.data_root = "/root/autodl-tmp/datasets/pannuke/coco_format/"
-    cfg.train_dataloader.batch_size = 4
+    # cfg.train_dataloader.batch_size = 64
+    # cfg.val_dataloader.batch_size = 64
     # Set up working dir to save files and logs.
-    cfg.work_dir = "/root/autodl-tmp/pannuke_app/train/unet/consep/work-dir"
+    cfg.work_dir = "work-dir"
     runner = Runner.from_cfg(cfg)
 
     # start training
