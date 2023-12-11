@@ -88,6 +88,37 @@ class CoNSeP(__AbstractDataset):
             ann = ann.astype("int32")
 
         return ann
+    
+    def load_ann_for_patch(self, img_path):
+        """ to keep consistentcy with monusac, in the extract func, we load ann from seg_mask and inst, not mat label files
+        """
+        """
+        输入的是 img_path
+        """
+        # assumes that ann is HxW
+        # ann_inst = sio.loadmat(path)["inst_map"]
+        # inst_path, seg_mask_path = self.load_ann_path(img_path)
+        inst_path = img_path.replace("imgs", "inst").replace("png", "npy")
+        seg_mask_path = img_path.replace("imgs", "seg_mask")  # .replace("png", "npy")
+        # return inst_path, seg_mask_path
+
+        ann_inst = np.load(inst_path)
+
+        if with_type:
+            ann_type = cv2.imread(seg_mask_path, 0)
+            ann = np.dstack([ann_inst, ann_type])
+            ann = ann.astype("int32")
+            return ann
+        else:
+            ann = np.expand_dims(ann_inst, -1)
+            ann = ann.astype("int32")
+
+        return ann
+
+    def load_img_for_patch(self, img_path):
+        """load image for patch
+        """
+        return self.load_img(img_path)
 
     def gen_inst_map(self, labels_path, save_dir):
         """generate segmask for each image in the dataset consep
@@ -172,6 +203,21 @@ class CoNSeP(__AbstractDataset):
             },
         ]
 
+
+class _Patched_CoNSeP(CoNSeP):
+    def __init__(self, data_dir) -> None:
+        super().__init__(data_dir)
+        self.imgs = glob.glob(f"{data_dir}/imgs/*.npy")
+
+    def load_image(self, img_path):
+        ann = np.load(img_path)
+        return ann[..., :3]
+
+    def load_ann(self, img_path):
+        """只需要将patch后的数据读入即可
+        """
+        ann = np.load(img_path)[..., 3:]
+        return ann
 
 class PanNuke(__AbstractDataset):
     def __init__(self, data_dir) -> None:
@@ -347,6 +393,30 @@ class MoNuSAC(__AbstractDataset):
             },
         ]
 
+    def load_img_for_patch(self, img_path):
+        """load image for patch
+        """
+        return self.load_img(img_path)
+    
+    def load_ann_for_patch(self, img_path):
+        return self.load_ann(img_path)
+
+
+class _Patched_MoNuSAC(MoNuSAC):
+    def __init__(self, data_dir) -> None:
+        super().__init__(data_dir)
+        self.imgs = glob.glob(f"{data_dir}/imgs/*.npy")
+
+    def load_image(self, img_path):
+        ann = np.load(img_path)
+        return ann[..., :3]
+
+    def load_ann(self, img_path):
+        """只需要将patch后的数据读入即可
+        """
+        ann = np.load(img_path)[..., 3:]
+        return ann
+
 
 def get_transformer(name):
     """Return a pre-defined dataset object associated with `name`."""
@@ -356,6 +426,8 @@ def get_transformer(name):
         "monusac": lambda: MoNuSAC,
         "consep": lambda: CoNSeP,
         "pannuke": lambda: PanNuke,
+        "patched_consep": lambda:_Patched_CoNSeP,
+        "patched_monusac": lambda:_Patched_MoNuSAC,
     }
     if name.lower() in name_dict:
         return name_dict[name]()

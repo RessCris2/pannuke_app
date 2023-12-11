@@ -63,14 +63,15 @@ if __name__ == "__main__":
         img_ext, img_dir = split_desc["img"]
         ann_ext, ann_dir = split_desc["ann"]
 
-        out_dir = "%s/%s/%dx%d_%dx%d/" % (
-            save_root,
-            split_name,
-            win_size[0],
-            win_size[1],
-            step_size[0],
-            step_size[1],
-        )
+        # out_dir = "%s/%s/%dx%d_%dx%d/" % (
+        #     save_root,
+        #     split_name,
+        #     win_size[0],
+        #     win_size[1],
+        #     step_size[0],
+        #     step_size[1],
+        # )
+        out_dir = f"{save_root}/{split_name}/imgs/"
         file_list = glob.glob(patterning("%s/*%s" % (ann_dir, ann_ext)))
         file_list.sort()  # ensure same ordering across platform
 
