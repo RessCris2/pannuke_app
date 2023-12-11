@@ -2,18 +2,18 @@ import glob
 import os
 import os.path as osp
 import shutil
+import sys
 import xml.etree.ElementTree as ET
 
 import cv2
 import numpy as np
-
 # import openslide
 import openslide
 from skimage import draw
 from tqdm import tqdm
 
-# sys.path.append("/root/autodl-tmp/archive/")
-from ..utils import rm_n_mkdir, svs_to_tif
+sys.path.append("/root/autodl-tmp/pannuke_app/src")
+from utils import rm_n_mkdir, svs_to_tif
 
 
 def rm_n_mkdir(dir_path):
@@ -32,6 +32,12 @@ def svs_to_tif(path):
 
 
 def read_xml(xml_file):
+    name_to_id = {'Epithelial':1,
+                  'Lymphocyte':2,
+                  'Neutrophil':3,
+                    'Macrophage':4,
+
+    }
     tree = ET.parse(xml_file)
     root = tree.getroot()
 
@@ -43,7 +49,12 @@ def read_xml(xml_file):
 
     inst_id = 0
     for k in root:
-        type_id = int(k.attrib["Id"])
+        # type_id = int(k.attrib["Id"])
+        type_name = k[0][0].attrib['Name']
+        if type_name not in name_to_id.keys():
+            continue
+        type_id = name_to_id[type_name]
+
 
         # cnt=0
         for x in k[1][1:]:
@@ -113,10 +124,8 @@ def convert(
 if __name__ == "__main__":
     # data_path = "/home/pannuke_pre/datasets/original/MoNuSAC/MoNuSAC Testing Data and Annotations"  # Path to read data from
     # dest_path = "/home/pannuke_pre/datasets/original/MoNuSAC/test" # Path to save binary masks corresponding to xml files
-    data_path = (
-        "/home/pannuke_pre/datasets/original/MoNuSAC/MoNuSAC_images_and_annotations"
-    )
-    dest_path = "/home/pannuke_pre/datasets/original/MoNuSAC/train"
+    data_path = "/root/autodl-tmp/pannuke_app/datasets/raw/MoNuSAC/train"
+    dest_path = "/root/autodl-tmp/pannuke_app/datasets/processed/MoNuSAC/train"
     convert(
         data_path,
         dest_path,

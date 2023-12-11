@@ -1,11 +1,12 @@
 
-# _base_ = [
-#     "/root/autodl-tmp/pannuke_app/src/models/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
-# ]
 _base_ = [
-    # "/root/autodl-tmp/pannuke_app/src/models/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
-    "/root/mmlab/mmdetection-main/configs/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
+    "/root/autodl-tmp/pannuke_app/src/models/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
 ]
+# _base_ = [
+#     # "/root/autodl-tmp/pannuke_app/src/models/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
+#     "/root/mmlab/mmdetection-main/configs/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
+# ]
+
 data_root = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/"
 
 # consep
@@ -22,7 +23,7 @@ train_pipeline = [
     dict(type="LoadImageFromFile", backend_args=backend_args),
     dict(type="LoadAnnotations", with_bbox=True, with_mask=True),
     dict(type="Resize", scale=(1024, 1024), keep_ratio=True),
-    dict(type="RandomCrop", crop_size=(800, 800)),
+    dict(type="RandomCrop", crop_size=(256, 256)),
     dict(type="RandomFlip", prob=0.5),
     dict(type="PackDetInputs"),
 ]
@@ -94,7 +95,23 @@ test_evaluator = val_evaluator = dict(
 
 
 model = dict(
-    roi_head=dict(bbox_head=dict(num_classes=4), mask_head=dict(num_classes=4))
+    roi_head=dict(bbox_head=dict(num_classes=4), 
+                  mask_head=dict(num_classes=4)
+                  ),
+    test_cfg=dict(
+        rpn=dict(
+            nms_pre=3000,
+            max_per_img=3000,
+            nms=dict(type="nms", iou_threshold=0.7),
+            min_bbox_size=0,
+        ),
+        rcnn=dict(
+            score_thr=0.05,
+            nms=dict(type="nms", iou_threshold=0.5),
+            max_per_img=2000,
+            mask_thr_binary=0.5,
+        ),
+    )
 )
 
 
@@ -135,7 +152,7 @@ resume = False
 optim_wrapper = dict(
     type='AmpOptimWrapper',
     # optimizer=dict(type='SGD', lr=0.001, momentum=0.9, weight_decay=0.0001),
-    optimizer=dict(_delete_=True, type='AdamW', lr=0.0001),
+    optimizer=dict(_delete_=True, type='AdamW', lr=0.000005),
     loss_scale='dynamic')
 
 # param_scheduler = [

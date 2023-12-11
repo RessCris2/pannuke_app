@@ -54,15 +54,15 @@ def gen_dist_map():
 
 
 def gen_inst():
-    data_dir = "/root/autodl-tmp/pannuke_app/datasets/raw/CoNSeP/CoNSeP/Train"
+    data_dir = "/root/autodl-tmp/pannuke_app/datasets/raw/CoNSeP/data/consep/CoNSeP/Train"
     consep = CoNSeP(data_dir)
-    labels_path = "/root/autodl-tmp/pannuke_app/datasets/raw/CoNSeP/CoNSeP/Train/Labels"
+    labels_path = "/root/autodl-tmp/pannuke_app/datasets/raw/CoNSeP/data/consep/CoNSeP/Train/Labels"
     save_dir = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/train/inst"
     consep.gen_inst_map(labels_path, save_dir)
 
-    data_dir = "/root/autodl-tmp/pannuke_app/datasets/raw/CoNSeP/CoNSeP/Test"
+    data_dir = "/root/autodl-tmp/pannuke_app/datasets/raw/CoNSeP/data/consep/CoNSeP/Test"
     consep = CoNSeP(data_dir)
-    labels_path = "/root/autodl-tmp/pannuke_app/datasets/raw/CoNSeP/CoNSeP/Test/Labels"
+    labels_path = "/root/autodl-tmp/pannuke_app/datasets/raw/CoNSeP/data/consep/CoNSeP/Train/Labels"
     save_dir = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/test/inst"
     consep.gen_inst_map(labels_path, save_dir)
 

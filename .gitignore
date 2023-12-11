@@ -13,6 +13,11 @@ hover_old/
 **/train/model_data/
 **/train/work-dir/
 ultralytics/
+training_data/
+maskrcnn_v2/
+logs/
+runs/
+
 
 **/coco_converted/
 # models dir

@@ -21,35 +21,37 @@ if __name__ == "__main__":
     # Determines whether to extract type map (only applicable to datasets with class labels).
     type_classification = True
 
-    win_size = [540, 540]
-    step_size = [164, 164]
+    win_size = [256, 256]
+    step_size = [80, 80]
     extract_type = "mirror"  # Choose 'mirror' or 'valid'. 'mirror'- use padding at borders. 'valid'- only extract from valid regions.
 
     # Name of dataset - use Kumar, CPM17 or CoNSeP.
     # This used to get the specific dataset img and ann loading scheme from dataset.py
     dataset_name = "consep"
-    save_root = "dataset/training_data/%s/" % dataset_name
+    # save_root = "dataset/training_data/%s/" % dataset_name
+    save_root = "/root/autodl-tmp/pannuke_app/projects/consep/maskrcnn_v23/training_data/"
 
+    raw_dir = "/root/autodl-tmp/pannuke_app/datasets/raw/CoNSeP/data/consep/CoNSeP"
     # a dictionary to specify where the dataset path should be
     dataset_info = {
         "train": {
             "img": (
                 ".png",
-                "/root/autodl-tmp/pannuke_app/datasets/raw/CoNSeP/CoNSeP/Train/Images",
+                f"{raw_dir}/Train/Images",
             ),
             "ann": (
                 ".mat",
-                "/root/autodl-tmp/pannuke_app/datasets/raw/CoNSeP/CoNSeP/Train/Labels",
+                f"{raw_dir}/Train/Labels",
             ),
         },
         "valid": {
             "img": (
                 ".png",
-                "/root/autodl-tmp/pannuke_app/datasets/raw/CoNSeP/CoNSeP/Test/Images",
+                f"{raw_dir}/Test/Images",
             ),
             "ann": (
                 ".mat",
-                "/root/autodl-tmp/pannuke_app/datasets/raw/CoNSeP/CoNSeP/Test/Labels",
+                f"{raw_dir}/Test/Labels",
             ),
         },
     }
@@ -61,9 +63,8 @@ if __name__ == "__main__":
         img_ext, img_dir = split_desc["img"]
         ann_ext, ann_dir = split_desc["ann"]
 
-        out_dir = "%s/%s/%s/%dx%d_%dx%d/" % (
+        out_dir = "%s/%s/%dx%d_%dx%d/" % (
             save_root,
-            dataset_name,
             split_name,
             win_size[0],
             win_size[1],

@@ -90,7 +90,7 @@ class __CoNSeP(__AbstractDataset):
     def load_img(self, path):
         return cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
 
-    def load_ann(self, path, with_type=False):
+    def load_ann(self, path, with_type=True):
         # assumes that ann is HxW
         ann_inst = sio.loadmat(path)["inst_map"]
         if with_type:

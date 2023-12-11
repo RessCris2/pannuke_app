@@ -100,7 +100,7 @@ class CoNSeP(__AbstractDataset):
         for label_path in paths:
             basename = pathlib.Path(label_path).stem
             ann_inst = sio.loadmat(label_path)["inst_map"]
-            ann_inst = ann_inst.astype("uint8")
+            ann_inst = ann_inst.astype("int32")
             inst_path = f"{save_dir}/{basename}.npy"
             np.save(inst_path, ann_inst)
 
@@ -110,7 +110,6 @@ class CoNSeP(__AbstractDataset):
         Params:
 
         """
-
         # save_dir = labels_path.replace("Labels", "seg_mask")
         os.makedirs(save_dir, exist_ok=True)
         paths = glob.glob(f"{labels_path}/*.mat")
