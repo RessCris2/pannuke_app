@@ -88,10 +88,9 @@ class CoNSeP(__AbstractDataset):
             ann = ann.astype("int32")
 
         return ann
-    
-    def load_ann_for_patch(self, img_path):
-        """ to keep consistentcy with monusac, in the extract func, we load ann from seg_mask and inst, not mat label files
-        """
+
+    def load_ann_for_patch(self, img_path, with_type=True):
+        """to keep consistentcy with monusac, in the extract func, we load ann from seg_mask and inst, not mat label files"""
         """
         输入的是 img_path
         """
@@ -116,8 +115,7 @@ class CoNSeP(__AbstractDataset):
         return ann
 
     def load_img_for_patch(self, img_path):
-        """load image for patch
-        """
+        """load image for patch"""
         return self.load_img(img_path)
 
     def gen_inst_map(self, labels_path, save_dir):
@@ -214,10 +212,10 @@ class _Patched_CoNSeP(CoNSeP):
         return ann[..., :3]
 
     def load_ann(self, img_path):
-        """只需要将patch后的数据读入即可
-        """
+        """只需要将patch后的数据读入即可"""
         ann = np.load(img_path)[..., 3:]
         return ann
+
 
 class PanNuke(__AbstractDataset):
     def __init__(self, data_dir) -> None:
@@ -394,10 +392,9 @@ class MoNuSAC(__AbstractDataset):
         ]
 
     def load_img_for_patch(self, img_path):
-        """load image for patch
-        """
+        """load image for patch"""
         return self.load_img(img_path)
-    
+
     def load_ann_for_patch(self, img_path):
         return self.load_ann(img_path)
 
@@ -412,8 +409,7 @@ class _Patched_MoNuSAC(MoNuSAC):
         return ann[..., :3]
 
     def load_ann(self, img_path):
-        """只需要将patch后的数据读入即可
-        """
+        """只需要将patch后的数据读入即可"""
         ann = np.load(img_path)[..., 3:]
         return ann
 
@@ -426,8 +422,8 @@ def get_transformer(name):
         "monusac": lambda: MoNuSAC,
         "consep": lambda: CoNSeP,
         "pannuke": lambda: PanNuke,
-        "patched_consep": lambda:_Patched_CoNSeP,
-        "patched_monusac": lambda:_Patched_MoNuSAC,
+        "patched_consep": lambda: _Patched_CoNSeP,
+        "patched_monusac": lambda: _Patched_MoNuSAC,
     }
     if name.lower() in name_dict:
         return name_dict[name]()
