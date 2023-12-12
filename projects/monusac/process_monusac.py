@@ -9,11 +9,11 @@ from src.data_process.extract_fun import extract_patches
 
 
 def patch_monusac():
-    dataset_name = 'monusac'
-    # raw_dir = "/root/autodl-tmp/pannuke_app/datasets/processed/MoNuSAC/train/"
-    # save_root = "/root/autodl-tmp/pannuke_app/projects/monusac/training_data/train/"
-    # extract_patches(dataset_name, raw_dir, save_root)
-    # print("train patch done")
+    dataset_name = "monusac"
+    raw_dir = "/root/autodl-tmp/pannuke_app/datasets/processed/MoNuSAC/train/"
+    save_root = "/root/autodl-tmp/pannuke_app/projects/monusac/training_data/train/"
+    extract_patches(dataset_name, raw_dir, save_root)
+    print("train patch done")
 
     raw_dir = "/root/autodl-tmp/pannuke_app/datasets/processed/MoNuSAC/test/"
     save_root = "/root/autodl-tmp/pannuke_app/projects/monusac/training_data/test/"

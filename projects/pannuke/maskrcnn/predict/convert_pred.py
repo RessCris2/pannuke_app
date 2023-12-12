@@ -14,9 +14,7 @@ from src.evaluation.stats_utils_v2 import eveluate_one_pic_inst
 
 
 def convert_pred2coco(ann_file, pred_result_dir, save_path):
-    # test = COCO(
-    #     "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/test/test_annotations.json"
-    # )
+    
     test = COCO(ann_file)
     results = []
     metrics = []
