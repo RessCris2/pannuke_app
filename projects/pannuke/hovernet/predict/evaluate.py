@@ -11,6 +11,7 @@ from pycocotools.coco import COCO
 from pycocotools.cocoeval import COCOeval
 
 sys.path.append("/root/autodl-tmp/pannuke_app/")
+import pandas as pd
 from src.evaluation.stats_utils_v2 import eveluate_one_pic_inst
 from src.models.hover.compute_stats import run_nuclei_inst_stat
 
@@ -85,8 +86,10 @@ def evaluate_pq(true_dir, pred_dir):
     # pred_paths = glob.glob(os.path.join(pred_dir, "*.mat"))
 
     metrics = []
+    basenames = []
     for true_path in true_paths:
         basename = pathlib.Path(true_path).stem
+
         pred_path = os.path.join(pred_dir, basename + ".mat")
         try:
             true_masks = convert_inst2masks(true_path)
@@ -94,7 +97,16 @@ def evaluate_pq(true_dir, pred_dir):
         except ValueError:
             continue
         metric = eveluate_one_pic_inst(true_masks, pred_masks)
+        if metric[0] > 1 or metric[1] > 1:
+            print(basename)
+            continue
+        print(basename, metric)
         metrics.append(metric)
+        basenames.append(basename)
+    metrics = pd.DataFrame(metrics, columns=["dice", "aji"], index=basenames)
+    metrics.to_csv(f"{pred_dir}/../metrics.csv")
+    print(metrics.mean(axis=0))
+    print(metrics)
     avg_metric = np.mean(metrics, axis=0)
     return avg_metric
 
@@ -113,18 +125,21 @@ def calculate_map(ann_file, pred_result_dir):
         results.extend(items)
     pred = coco_api.loadRes(results)
     coco_eval = COCOeval(coco_api, pred, iouType="bbox")
-    coco_eval.params.maxDets = [100, 500, 1000]
+    # coco_eval.params.maxDets = [100, 500, 1000]
     coco_eval.evaluate()
     coco_eval.accumulate()
     coco_eval.summarize()
 
 
 if __name__ == "__main__":
-    pred_dir = "predict/pred_data/mat"
-    true_dir = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/test/inst"
+    pred_dir = "pred_data/mat"
+    true_dir = "/root/autodl-tmp/pannuke_app/datasets/processed/PanNuke/test/inst"
     # metrics = evaluate_pq(true_dir, pred_dir)
     # print(metrics)
     # mat_path = "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/predict/pred_data/mat/test_12.mat"
     # convert_mat2coco(mat_path)
-    ann_file = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/test/test_annotations.json"
-    calculate_map(ann_file, pred_dir)
+    ann_file = "/root/autodl-tmp/pannuke_app/datasets/processed/PanNuke/test/test_annotations.json"
+    # calculate_map(ann_file, pred_dir)
+    evaluate_pq(true_dir, pred_dir)
+    # metrics = run_nuclei_inst_stat(pred_dir, true_dir, print_img_stats=False)
+    # print(metrics)

@@ -41,5 +41,5 @@ for result in results:
     print(metric)
     metrics.append(metric)
 
-metrics = np.appay(metrics).mean(axis=0)
+metrics = np.array(metrics).mean(axis=0)
 print(metrics)

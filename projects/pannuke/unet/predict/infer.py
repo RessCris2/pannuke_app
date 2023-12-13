@@ -14,6 +14,7 @@ from pycocotools.cocoeval import COCOeval
 sys.path.append("/root/autodl-tmp/pannuke_app/")
 # 得到每张图片的预测概率和label， 下一步是利用后处理得到 inst_map.
 import numpy as np
+import pandas as pd
 from src.evaluation.post_proc import (
     dynamic_watershed_alias,
 )  # 是不是应该放在 src.models.unet 中？
@@ -25,15 +26,15 @@ from src.evaluation.stats_utils import (
 )
 
 
-def compute_pq(true, pred):
+def compute_seg(true, pred):
     metrics = []
     # to ensure that the instance numbering is contiguous
     pred = remap_label(pred, by_size=False)
     true = remap_label(true, by_size=False)
 
-    pq_info = get_fast_pq(true, pred, match_iou=0.5)[0]
+    # pq_info = get_fast_pq(true, pred, match_iou=0.5)[0]
     metrics.append(get_dice_1(true, pred))
-    metrics.append(pq_info[0])  # dq
+    # metrics.append(pq_info[0])  # dq
     metrics.append(get_fast_aji_plus(true, pred))
     return metrics
 
@@ -89,31 +90,39 @@ def compute_instseg(coco_api, pred_inst, seg_label, img_path):
     return items
 
 
-def infer_dir(save_path):  # (pred_dir, cfg_path, ckpt_path, device="cuda"):
+def infer_dir(
+    cfg_path, ckpt_filename, pred_dir, ann_file, save_path
+):  # (pred_dir, cfg_path, ckpt_path, device="cuda"):
     """
     infer 一个文件夹，并且计算了相应指标（取均值）
     """
-    # test initialization
-    cfg_path = (
-        "/root/autodl-tmp/pannuke_app/projects/consep/unet/train/config_consep.py"
-    )
+    # test initializations
+    # cfg_path = (
+    #     "/root/autodl-tmp/pannuke_app/projects/consep/unet/train/config_consep.py"
+    # )
 
-    ckpt_filename = (
-        "/root/autodl-tmp/pannuke_app/projects/consep/unet/train/work-dir/iter_400.pth"
-    )
+    # ckpt_filename = (
+    #     "/root/autodl-tmp/pannuke_app/projects/consep/unet/train/work-dir/iter_400.pth"
+    # )
     infer = MMSegInferencer(cfg_path, ckpt_filename, device="cuda")
 
-    pred_dir = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/test/imgs"
-    ann_file = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/test/test_annotations.json"
+    # pred_dir = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/test/imgs"
+    # ann_file = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/test/test_annotations.json"
     results = infer(pred_dir, return_datasamples=True)
+    save_dir = "/root/autodl-tmp/pannuke_app/projects/pannuke/unet/predict/inst/"
+    os.makedirs(save_dir, exist_ok=True)
 
     coco_api = COCO(ann_file)
     metrics = []
     map_data = []
+
+    basenames = []
     for res in results:
         # 每张图的预测结果
         # TODO
         img_path = res.metainfo["img_path"]
+        basename = os.path.basename(img_path)
+        basenames.append(basename)
         true_inst = np.load(img_path.replace("imgs", "inst").replace("png", "npy"))
         seg_logits = res.seg_logits.data
         seg_label = res.pred_sem_seg.data
@@ -121,14 +130,23 @@ def infer_dir(save_path):  # (pred_dir, cfg_path, ckpt_path, device="cuda"):
             prob_map = torch.softmax(seg_logits, dim=0).max(axis=0)[0].cpu().numpy()
         except Exception as e:
             prob_map = torch.softmax(seg_logits, dim=0).max(axis=0)[0].numpy()
-        pred_inst = dynamic_watershed_alias(prob_map, mode="prob")  # 得到每张图的inst_map
-        metric = compute_pq(true_inst, pred_inst)
 
+        pred_inst = dynamic_watershed_alias(prob_map, mode="prob")  # 得到每张图的inst_map
+        save_path = f"{save_dir}/ {basename.replace('png', 'npy')}"
+        pred_path = save_path.replace("inst", "prob_map")
+        np.save(pred_path, prob_map)
+        np.save(save_path, pred_inst)
+        metric = compute_seg(true_inst, pred_inst)
         metrics.append(metric)
         seg_label = seg_label.cpu().numpy().squeeze()
         ann = compute_instseg(coco_api, pred_inst, seg_label, img_path)
         map_data.extend(ann)
 
+    metrics = pd.DataFrame(metrics, columns=["dice", "aji"], index=basenames)
+    metrics.to_csv(f"{pred_dir}/../metrics.csv")
+    print(metrics.mean(axis=0))
+    print(metrics)
+    avg_metric = np.mean(metrics, axis=0)
     avg_pq = np.array(metrics).mean(axis=0)
     print(avg_pq)
 
@@ -153,6 +171,11 @@ def infer_dir(save_path):  # (pred_dir, cfg_path, ckpt_path, device="cuda"):
 # 根据 inst_map, 和label的情况，计算每个inst的label.
 
 if __name__ == "__main__":
-    infer_dir(
-        save_path="/root/autodl-tmp/pannuke_app/projects/consep/unet/predict/pred.json"
+    pred_dir = "/root/autodl-tmp/pannuke_app/datasets/processed/PanNuke/test/imgs"
+    cfg_path = (
+        "/root/autodl-tmp/pannuke_app/projects/pannuke/unet/train/work-dir/config.py"
     )
+    ckpt_filename = "/root/autodl-tmp/pannuke_app/projects/pannuke/unet/train/work-dir/iter_32000.pth"
+    ann_file = "/root/autodl-tmp/pannuke_app/datasets/processed/PanNuke/test/test_annotations.json"
+    save_path = "/root/autodl-tmp/pannuke_app/projects/pannuke/unet/predict/pred.json"
+    infer_dir(cfg_path, ckpt_filename, pred_dir, ann_file, save_path)

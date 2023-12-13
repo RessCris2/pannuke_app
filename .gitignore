@@ -17,6 +17,9 @@ training_data/
 maskrcnn_v2/
 logs/
 runs/
+inst/
+prob_map/
+patched_monusac.zip*
 
 
 **/coco_converted/

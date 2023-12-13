@@ -25,9 +25,9 @@ def get_fast_aji(true_id_list, true_masks, pred_id_list, pred_masks):
     pairwise_union = np.zeros([len(true_id_list), len(pred_id_list)], dtype=np.float64)
 
     for true_id in true_id_list:  # 0-th is background
-        t_mask = true_masks[true_id]
+        t_mask = true_masks[true_id].astype(int)
         for pred_id in pred_id_list:
-            p_mask = pred_masks[pred_id]
+            p_mask = pred_masks[pred_id].astype(int)
 
             if np.sum(p_mask[t_mask > 0]) == 0:  # 判断是否有重合，没有就go on
                 continue
@@ -89,12 +89,12 @@ def get_fast_aji_plus(true_id_list, true_masks, pred_id_list, pred_masks):
 
     # caching pairwise
     for true_id in true_id_list:  # 0-th is background
-        t_mask = true_masks[true_id]
+        t_mask = true_masks[true_id].astype(int)
         #         pred_true_overlap = pred[t_mask > 0]
         #         pred_true_overlap_id = np.unique(pred_true_overlap)
         #         pred_true_overlap_id = list(pred_true_overlap_id)
         for pred_id in pred_id_list:
-            p_mask = pred_masks[pred_id]
+            p_mask = pred_masks[pred_id].astype(int)
 
             if np.sum(p_mask[t_mask > 0]) == 0:  # 判断是否有重合，没有就go on
                 continue
@@ -162,9 +162,9 @@ def get_fast_pq(true_id_list, true_masks, pred_id_list, pred_masks, match_iou=0.
 
     # caching pairwise iou
     for true_id in true_id_list:  # 0-th is background
-        t_mask = true_masks[true_id]
+        t_mask = true_masks[true_id].astype(int)
         for pred_id in pred_id_list:
-            p_mask = pred_masks[pred_id]
+            p_mask = pred_masks[pred_id].astype(int)
 
             if np.sum(p_mask[t_mask > 0]) == 0:  # 判断是否有重合，没有就go on
                 continue
@@ -228,9 +228,9 @@ def get_fast_dice_2(true_id, true_masks, pred_id, pred_masks):
     overall_inter = 0
     # for true_idx in range(len(true_id)):
     for true_idx in true_id:  # 0-th is background
-        t_mask = true_masks[true_idx]
+        t_mask = true_masks[true_idx].astype(int)
         for pred_idx in pred_id:
-            p_mask = pred_masks[pred_idx]
+            p_mask = pred_masks[pred_idx].astype(int)
 
             if np.sum(p_mask[t_mask > 0]) == 0:  # 判断是否有重合，没有就go on
                 continue
@@ -251,9 +251,9 @@ def get_dice_2(true_id, true_masks, pred_id, pred_masks):
     total_markup = 0
     total_intersect = 0
     for t in true_id:
-        t_mask = true_masks[t]
+        t_mask = true_masks[t].astype(int)
         for p in pred_id:
-            p_mask = pred_masks[p]
+            p_mask = pred_masks[p].astype(int)
             intersect = p_mask * t_mask
             if intersect.sum() > 0:
                 total_intersect += intersect.sum()
@@ -536,4 +536,9 @@ def eveluate_one_pic_inst(true_masks, pred_masks):
     # metrics.append(pq[0])
     # metrics.append(pq[1])
     # metrics.append(pq[2])
+    if metrics[0] > 1:
+        print("something is wrong with eveluate_one_pic_inst")
+        aji_plus = get_fast_aji_plus(true_id_list, true_masks, pred_id_list, pred_masks)
+        # dice = get_dice_2(true_id_list, true_masks, pred_id_list, pred_masks)
+        dice = get_dice_2(true_id_list, true_masks, pred_id_list, pred_masks)
     return metrics
