@@ -40,7 +40,7 @@ def remap_label(pred, by_size=False):
     return new_pred
 
 
-def pn2inst_type(pn_mask_path, save_dir, prefix="train"):
+def pn2inst_type(pn_mask_path_or_mask, save_dir, prefix="train"):
     """
     np.max(mask0) = 3512; 数据实际处理过程中，发现 inst id 有重复的情况，所以需要重新标注 inst id;
     处理方式为每一层加 i * 10000, i = 1, 2, 3, 4, 5, 6; 之后再对每层本该为 0 的地方，赋值为 0;
@@ -51,7 +51,11 @@ def pn2inst_type(pn_mask_path, save_dir, prefix="train"):
     os.makedirs(inst_dir, exist_ok=True)
     os.makedirs(seg_mask_dir, exist_ok=True)
 
-    mask0 = np.load(pn_mask_path)
+    if isinstance(pn_mask_path_or_mask, str):
+        mask0 = np.load(pn_mask_path_or_mask)
+    else:
+        mask0 = pn_mask_path_or_mask
+
     for idx in range(len(mask0)):
         mask = mask0[idx]
         inst_ids = []
@@ -97,7 +101,9 @@ def pn2inst_type(pn_mask_path, save_dir, prefix="train"):
         cv2.imwrite(seg_mask_path, type_mask)
 
 
-def pn2img(pn_path, save_dir, prefix="train"):
+
+
+def pn2img(pn_path_or_img, save_dir, prefix="train"):
     """
     params:
         pn_dir: directory of pannuke images
@@ -106,7 +112,11 @@ def pn2img(pn_path, save_dir, prefix="train"):
         None
     """
     os.makedirs(save_dir, exist_ok=True)
-    images = np.load(pn_path)
+    if isinstance(pn_path_or_img, str):
+        images = np.load(pn_path)
+    else:
+        images = pn_path_or_img
+        
     for i in range(len(images)):
         image = images[i]
         save_path = osp.join(save_dir, "imgs", "{}_{}.png".format(prefix, i))

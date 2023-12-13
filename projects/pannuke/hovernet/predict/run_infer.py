@@ -87,45 +87,14 @@ from misc.utils import log_info
 
 if __name__ == "__main__":
     sub_cli_dict = {"tile": tile_cli, "wsi": wsi_cli}
-    # args = docopt(
-    #     __doc__,
-    #     help=False,
-    #     options_first=True,
-    #     version="HoVer-Net Pytorch Inference v1.0",
-    # )
     parser = argparse.ArgumentParser(description="Train a detector")
-    # sub_cmd = args.pop("<command>")
-    # sub_cmd_args = args.pop("<args>")
-
-    # # ! TODO: where to save logging
-    # logging.basicConfig(
-    #     level=logging.INFO,
-    #     format="|%(asctime)s.%(msecs)03d| [%(levelname)s] %(message)s",
-    #     datefmt="%Y-%m-%d|%H:%M:%S",
-    #     handlers=[logging.FileHandler("debug.log"), logging.StreamHandler()],
-    # )
-
-    # if args["--help"] and sub_cmd is not None:
-    #     if sub_cmd in sub_cli_dict:
-    #         print(sub_cli_dict[sub_cmd])
-    #     else:
-    #         print(__doc__)
-    #     exit()
-    # if args["--help"] or sub_cmd is None:
-    #     print(__doc__)
-    #     exit()
-
-    # sub_args = docopt(sub_cli_dict[sub_cmd], argv=sub_cmd_args, help=True)
-
-    # args.pop("--version")
-    # gpu_list = args.pop("--gpu")
-    # os.environ["CUDA_VISIBLE_DEVICES"] = gpu_list
+  
     args = dict()
     args["gpu"] = "1"
     args["model_path"] = (
-        "/root/autodl-tmp/pannuke_app/projects/pannuke/hovernet/train/model_data/01/net_epoch=50.tar"
+        "/root/autodl-tmp/pannuke_app/projects/pannuke/hovernet/train/model_data/net_epoch=35.tar"
     )
-    # args['input_dir']=
+    #
     args["type_info_path"] = "type_info.json"
     args["batch_size"] = 16
     args["nr_inference_workers"] = 8
@@ -189,22 +158,6 @@ if __name__ == "__main__":
         }
     )
 
-    # if sub_cmd == "wsi":
-    #     run_args.update(
-    #         {
-    #             "input_dir": sub_args["input_dir"],
-    #             "output_dir": sub_args["output_dir"],
-    #             "input_mask_dir": sub_args["input_mask_dir"],
-    #             "cache_path": sub_args["cache_path"],
-    #             "proc_mag": int(sub_args["proc_mag"]),
-    #             "ambiguous_size": int(sub_args["ambiguous_size"]),
-    #             "chunk_shape": int(sub_args["chunk_shape"]),
-    #             "tile_shape": int(sub_args["tile_shape"]),
-    #             "save_thumb": sub_args["save_thumb"],
-    #             "save_mask": sub_args["save_mask"],
-    #         }
-    #     )
-    # # ***
 
     if sub_cmd == "tile":
         from infer.tile import InferManager

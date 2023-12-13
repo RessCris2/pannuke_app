@@ -65,24 +65,24 @@ model = dict(
     test_cfg=dict(mode='slide', crop_size=(256, 256), stride=(170, 170)))
 dataset_type = 'CoNSePDataset'
 data_root = '/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/'
-img_scale = (2336, 3504)
-crop_size = (256, 256)
+img_scale = (1024, 1024)
+crop_size = (800, 800)
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations'),
     dict(
         type='RandomResize',
-        scale=(2336, 3504),
-        ratio_range=(0.5, 2.0),
+        scale=(1024, 1024),
+        ratio_range=(0.8, 1.2),
         keep_ratio=True),
-    dict(type='RandomCrop', crop_size=(256, 256), cat_max_ratio=0.75),
+    dict(type='RandomCrop', crop_size=(800, 800), cat_max_ratio=0.75),
     dict(type='RandomFlip', prob=0.5),
     dict(type='PhotoMetricDistortion'),
     dict(type='PackSegInputs')
 ]
 test_pipeline = [
     dict(type='LoadImageFromFile'),
-    dict(type='Resize', scale=(256, 256), keep_ratio=True),
+    dict(type='Resize', scale=(1024, 1024), keep_ratio=True),
     dict(type='LoadAnnotations'),
     dict(type='PackSegInputs')
 ]
@@ -131,7 +131,7 @@ tta_pipeline = [
                     }]])
 ]
 train_dataloader = dict(
-    batch_size=16,
+    batch_size=2,
     num_workers=4,
     persistent_workers=True,
     sampler=dict(type='InfiniteSampler', shuffle=True),
@@ -148,12 +148,12 @@ train_dataloader = dict(
                 dict(type='LoadAnnotations'),
                 dict(
                     type='RandomResize',
-                    scale=(2336, 3504),
-                    ratio_range=(0.5, 2.0),
+                    scale=(1024, 1024),
+                    ratio_range=(0.8, 1.2),
                     keep_ratio=True),
                 dict(
                     type='RandomCrop',
-                    crop_size=(256, 256),
+                    crop_size=(800, 800),
                     cat_max_ratio=0.75),
                 dict(type='RandomFlip', prob=0.5),
                 dict(type='PhotoMetricDistortion'),
@@ -166,7 +166,7 @@ train_dataloader = dict(
                          (111, 67, 60)]),
             reduce_zero_label=True)))
 val_dataloader = dict(
-    batch_size=1,
+    batch_size=4,
     num_workers=4,
     persistent_workers=True,
     sampler=dict(type='DefaultSampler', shuffle=False),
@@ -176,7 +176,7 @@ val_dataloader = dict(
         data_prefix=dict(img_path='test/imgs', seg_map_path='test/seg_mask'),
         pipeline=[
             dict(type='LoadImageFromFile'),
-            dict(type='Resize', scale=(256, 256), keep_ratio=True),
+            dict(type='Resize', scale=(1024, 1024), keep_ratio=True),
             dict(type='LoadAnnotations'),
             dict(type='PackSegInputs')
         ],
@@ -187,7 +187,7 @@ val_dataloader = dict(
                      (111, 67, 60)]),
         reduce_zero_label=True))
 test_dataloader = dict(
-    batch_size=1,
+    batch_size=4,
     num_workers=4,
     persistent_workers=True,
     sampler=dict(type='DefaultSampler', shuffle=False),
@@ -197,7 +197,7 @@ test_dataloader = dict(
         data_prefix=dict(img_path='test/imgs', seg_map_path='test/seg_mask'),
         pipeline=[
             dict(type='LoadImageFromFile'),
-            dict(type='Resize', scale=(256, 256), keep_ratio=True),
+            dict(type='Resize', scale=(1024, 1024), keep_ratio=True),
             dict(type='LoadAnnotations'),
             dict(type='PackSegInputs')
         ],
@@ -238,14 +238,14 @@ param_scheduler = [
         end=40000,
         by_epoch=False)
 ]
-train_cfg = dict(type='IterBasedTrainLoop', max_iters=40000, val_interval=400)
+train_cfg = dict(type='IterBasedTrainLoop', max_iters=40000, val_interval=1000)
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 default_hooks = dict(
     timer=dict(type='IterTimerHook'),
     logger=dict(type='LoggerHook', interval=50, log_metric_by_epoch=False),
     param_scheduler=dict(type='ParamSchedulerHook'),
-    checkpoint=dict(type='CheckpointHook', by_epoch=False, interval=400),
+    checkpoint=dict(type='CheckpointHook', by_epoch=False, interval=1000),
     sampler_seed=dict(type='DistSamplerSeedHook'),
     visualization=dict(type='SegVisualizationHook'))
 metainfo = dict(
