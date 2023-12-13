@@ -22,7 +22,7 @@ def infer_dir(cfg_path, ckpt_path, pred_dir, device="cuda"):
 
 if __name__ == "__main__":
     root_dir = "/root/autodl-tmp/pannuke_app"
-    cfg_path = "../train/model_data/consep_config.py"
-    ckpt_path = "../train/model_data/epoch_1.pth"
-    pred_dir = f"{root_dir}/datasets/processed/CoNSeP/test/imgs"
+    cfg_path = "/root/autodl-tmp/pannuke_app/projects/pannuke/maskrcnn/train/work-dir/config.py"
+    ckpt_path = "/root/autodl-tmp/pannuke_app/projects/pannuke/maskrcnn/train/work-dir/epoch_9.pth"
+    pred_dir = f"{root_dir}/datasets/processed/PanNuke/test/imgs"
     infer_dir(cfg_path, ckpt_path, pred_dir)
