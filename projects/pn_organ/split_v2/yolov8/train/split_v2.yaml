@@ -1,0 +1,16 @@
+
+# Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
+path: /root/autodl-tmp/pannuke_app/projects/pn_organ/split_v2/yolov8/coco_converted/ # dataset root dir
+train: images/train/ # train images (relative to 'path') 118287 images
+val: images/test/ # val images (relative to 'path') 5000 images
+test:   # 20288 of 40670 images, submit to https://competitions.codalab.org/competitions/20794
+
+# Classes
+
+names:
+  0: Neoplastic
+  1: Inflammatory
+  2: Connective
+  3: Dead
+  4: Epithelial
+  
