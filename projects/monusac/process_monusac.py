@@ -44,5 +44,5 @@ def convert_patch_to_coco():
 
 
 if __name__ == "__main__":
-    # patch_monusac()
-    convert_patch_to_coco()
+    patch_monusac()
+    # convert_patch_to_coco()

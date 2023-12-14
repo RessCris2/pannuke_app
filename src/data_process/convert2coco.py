@@ -70,7 +70,12 @@ def convert_to_coco(dataset_name, data_dir, save_path, test_mode=False):
         # basename = pathlib.Path(image_filename).stem
         # inst = load_img(opj(INST_DIR, "{}.npy".format(basename)))
         # ann_path = transformer.load_ann_path(image_filename)
-        ann = transformer.load_ann(image_filename)
+        try:
+            ann = transformer.load_ann_for_patch(image_filename)
+        except:
+            ann = transformer.load_ann(image_filename)
+
+        # ann = transformer.load_ann(image_filename)
 
         inst = ann[:, :, 0]
         inst_ids = np.unique(inst)[1:]

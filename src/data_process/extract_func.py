@@ -13,7 +13,6 @@ import re
 import cv2
 import numpy as np
 import tqdm
-
 # from dataset import get_dataset
 from misc.patch_extractor import PatchExtractor
 from misc.utils import rm_n_mkdir
@@ -74,7 +73,10 @@ def extract_patches(
     seg_mask_dir = f"{save_root}/seg_mask/"
     img_dir = f"{save_root}/imgs/"
 
-    file_list = glob.glob(f"{raw_dir}/imgs/*.png")
+    # file_list = glob.glob(f"{raw_dir}/imgs/*.png")
+    # if len(file_list) == 0:
+        # file_list = glob.glob(f"{raw_dir}/Images/*.jpg")
+    file_list = parser.imgs
     file_list.sort()  # ensure same ordering across platform
 
     rm_n_mkdir(out_dir)
@@ -93,8 +95,12 @@ def extract_patches(
         # if file_idx == 1:
         #     continue
         base_name = pathlib.Path(file_path).stem
-        img = parser.load_img_for_patch(file_path)
-        ann = parser.load_ann_for_patch(file_path)
+        try:
+            img = parser.load_img_for_patch(file_path)
+            ann = parser.load_ann_for_patch(file_path)
+        except:
+            img = parser.load_img(file_path)
+            ann = parser.load_ann(file_path)
         # *
         img = np.concatenate([img, ann], axis=-1)
         if img.shape[0] < win_size[0] or img.shape[1] < win_size[1]:
