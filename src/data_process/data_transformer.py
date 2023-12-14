@@ -54,7 +54,8 @@ class CoNSeP(__AbstractDataset):
         self.data_dir = data_dir
         # TODO
         self.imgs = glob.glob(f"{data_dir}/Images/*.png")
-        # self.imgs = find_files(data_dir, ext="png")
+        if len(self.imgs) == 0:
+            self.imgs = glob.glob(f"{data_dir}/imgs/*.png")
         self.labels = find_files(data_dir, ext="mat")
 
         # init category attribute
@@ -63,6 +64,7 @@ class CoNSeP(__AbstractDataset):
     def load_ann_path(self, img_path):
         """get correspondign label path for the given img_path"""
         return img_path.replace("Images", "Labels").replace("png", "mat")
+        
 
     def load_img(self, path):
         return cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
