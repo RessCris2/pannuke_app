@@ -1,11 +1,6 @@
-
 _base_ = [
     # "/root/autodl-tmp/pannuke_app/src/models/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
-<<<<<<< HEAD
     "/root/mmlab/mmdetection-main/configs/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
-=======
-      "/root/mmlab/mmdetection-main/configs/mask_rcnn/mask-rcnn_r50_fpn_1x_coco.py"
->>>>>>> f60b67f591304810cd541205067906d2ba9b107e
 ]
 data_root = "/root/autodl-tmp/pannuke_app/datasets/processed/PanNuke/"
 
@@ -15,7 +10,13 @@ dataset_type = "CocoDataset"
 # data_root = "/home/pannuke_app/train/datasets/CoNSeP/"
 metainfo = {
     "classes": ("Neoplastic", "Inflammatory", "Connective", "Dead", "Epithelial"),
-    "palette": [(200, 10, 60), (120, 120, 60), (20, 120, 160), (72, 100, 60), (111, 67, 60)],
+    "palette": [
+        (200, 10, 60),
+        (120, 120, 60),
+        (20, 120, 160),
+        (72, 100, 60),
+        (111, 67, 60),
+    ],
 }
 
 backend_args = None
@@ -34,7 +35,7 @@ test_pipeline = [
     dict(type="LoadAnnotations", with_bbox=True, with_mask=True),
     dict(
         type="PackDetInputs",
-        meta_keys=("img_id", "img_path", "ori_shape", "img_shape","scale_factor"),
+        meta_keys=("img_id", "img_path", "ori_shape", "img_shape", "scale_factor"),
     ),
 ]
 
@@ -98,6 +99,16 @@ model = dict(
     roi_head=dict(bbox_head=dict(num_classes=5), mask_head=dict(num_classes=5))
 )
 
+train_cfg = dict(type="EpochBasedTrainLoop", max_epochs=20, val_interval=3)
+
+default_hooks = dict(
+    timer=dict(type="IterTimerHook"),
+    logger=dict(type="LoggerHook", interval=3),
+    param_scheduler=dict(type="ParamSchedulerHook"),
+    checkpoint=dict(type="CheckpointHook", interval=10),
+    sampler_seed=dict(type="DistSamplerSeedHook"),
+    visualization=dict(type="DetVisualizationHook"),
+)
 
 evaluation = dict(interval=10, metric="segm", options={"maxDets": [10, 30, 100]})
 

@@ -68,9 +68,10 @@ def parse_args():
 
     args = parser.parse_args(
         [
-            "consep_config.py",
+            "config.py",
             "--work-dir",
-            "model_data",
+            "work-dir",
+            '--amp',
         ]
     )
 
