@@ -18,7 +18,7 @@ class Config(object):
         self.debug = False
 
         model_name = "hovernet"
-        model_mode = "original"  # choose either `original` or `fast`
+        # model_mode = "original"  # choose either `original` or `fast`
 
         if model_mode not in ["original", "fast"]:
             raise Exception("Must use either `original` or `fast` as model mode")

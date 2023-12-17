@@ -9,22 +9,23 @@ _base_ = [
 
 # consep
 dataset_type = "CoNSePDataset"
-data_root = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/"
+data_root = "/root/autodl-tmp/pannuke_app/projects/monusac/training_data"
 # data_root = "/home/pannuke_app/train/datasets/CoNSeP/"
 metainfo = {
-    "classes": ("Inflammatory", "Healthy_epithelial", "Epithelial", "Spindle-shaped"),
+    # "classes": ("Inflammatory", "Healthy_epithelial", "Epithelial", "Spindle-shaped"),
+    "classes": ("Epithelial", "Lymphocyte", "Neutrophil", "Macrophage"),
     "palette": [(120, 120, 60), (20, 120, 160), (72, 100, 60), (111, 67, 60)],
 }
 
 img_suffix = ".png"
 seg_map_suffix = ".png"
 
-img_scale = (2336, 3504)
+img_scale = (256, 256)
 crop_size = (256, 256)
 train_pipeline = [
     dict(type="LoadImageFromFile"),
     dict(type="LoadAnnotations"),
-    dict(type="RandomResize", scale=img_scale, ratio_range=(0.5, 2.0), keep_ratio=True),
+    dict(type="RandomResize", scale=img_scale, ratio_range=(0.8, 1.3), keep_ratio=True),
     dict(type="RandomCrop", crop_size=crop_size, cat_max_ratio=0.75),
     dict(type="RandomFlip", prob=0.5),
     dict(type="PhotoMetricDistortion"),

@@ -96,6 +96,13 @@ test_dataloader = val_dataloader
 
 val_evaluator = dict(type="IoUMetric", iou_metrics=["mIoU"])
 test_evaluator = val_evaluator
+vis_backends = [
+    dict(type="LocalVisBackend"),
+    dict(type="TensorboardVisBackend"),
+]
+visualizer = dict(
+    type="SegLocalVisualizer", vis_backends=vis_backends, name="visualizer"
+)
 
 
 # -----------------------------------------------------------------------------
