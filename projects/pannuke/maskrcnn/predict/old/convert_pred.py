@@ -14,18 +14,31 @@ from src.evaluation.stats_utils_v2 import eveluate_one_pic_inst
 
 
 def convert_pred2coco(ann_file, pred_result_dir, save_path):
-    
     test = COCO(ann_file)
     results = []
     metrics = []
+    basenames = []
     for image in test.dataset["images"]:
+        basename = os.path.basename(image["file_name"])
         file_name = "{}/{}".format(
             pred_result_dir, image["file_name"].replace("png", "json")
         )
         with open(file_name, "r") as f:
             result = json.load(f)
         result["image_id"] = image["id"]
-        result["bbox"] = result.pop("bboxes")  # bbox 还得改为 xyxy 改为 xywh 格式
+
+        bboxs = []
+        for bbox in result["bboxes"]:
+            x_min, y_min, x_max, y_max = bbox
+            x_center = (x_min + x_max) / 2
+            y_center = (y_min + y_max) / 2
+            width = x_max - x_min
+            height = y_max - y_min
+            bbox = [x_center, y_center, width, height]
+            bboxs.append(bbox)
+
+        result["bbox"] = bboxs
+
         result["category_id"] = result.pop("labels")
         result["segmentation"] = result.pop("masks")
         result["score"] = result.pop("scores")
@@ -52,21 +65,17 @@ def convert_pred2coco(ann_file, pred_result_dir, save_path):
 
         results.extend(items)
         # 每张图的多个实例mask
-        print(pred_masks)
-        # gt_path = "{}/inst/{}".format(
-        #     os.path.dirname(ann_file), image["file_name"].replace("png", "npy")
-        # )
-        # gt_inst = np.load(gt_path, allow_pickle=True)
-
-        gt_masks = []
-        # 可以从 coco 的 ann 中获取 gt_masks
-        anns = test.loadAnns(test.getAnnIds(imgIds=[image["id"]]))
-        for ann in anns:
-            gt_masks.append(test.annToMask(ann))
-        print(gt_masks)
-        metric = eveluate_one_pic_inst(gt_masks, pred_masks)
-        metrics.append(metric)
-    print(metrics)
+        # print(pred_masks)
+        # gt_masks = []
+        # # 可以从 coco 的 ann 中获取 gt_masks
+        # anns = test.loadAnns(test.getAnnIds(imgIds=[image["id"]]))
+        # for ann in anns:
+        #     gt_masks.append(test.annToMask(ann))
+        # # print(gt_masks)
+        # metric = eveluate_one_pic_inst(gt_masks, pred_masks)
+        # metrics.append(metric)
+        # basenames.append(basename)
+    # print(metrics)
     assert save_path.endswith(".json"), " save_path has to end up wiht .json"
     with open(save_path, "w") as json_file:
         json.dump(results, json_file)
@@ -91,9 +100,10 @@ annotations:
 
 
 if __name__ == "__main__":
-    ann_file = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/test/test_annotations.json"
+    ann_file = "/root/autodl-tmp/pannuke_app/datasets/processed/PanNuke/test/test_annotations.json"
     pred_result_dir = (
-        "/root/autodl-tmp/pannuke_app/projects/consep/maskrcnn/predict/pred_data/preds"
+        "/root/autodl-tmp/pannuke_app/projects/pannuke/maskrcnn/predict/pred_data/preds"
     )
-    save_path = "/root/autodl-tmp/pannuke_app/projects/consep/maskrcnn/predict/pred_data/preds.json"
+    save_path = "/root/autodl-tmp/pannuke_app/projects/pannuke/maskrcnn/predict/pred_data/preds.json"
     convert_pred2coco(ann_file, pred_result_dir, save_path)
+    print("x")

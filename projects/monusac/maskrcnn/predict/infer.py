@@ -1,7 +1,7 @@
 from mmdet.apis import DetInferencer
 
 
-def infer_dir(cfg_path, ckpt_path, pred_dir, device="cuda"):
+def infer_dir(cfg_path, ckpt_path, pred_dir, out_dir="./pred_data", device="cuda"):
     # 初始化模型
     inferencer = DetInferencer(
         model=cfg_path,
@@ -15,7 +15,7 @@ def infer_dir(cfg_path, ckpt_path, pred_dir, device="cuda"):
         batch_size=4,
         pred_score_thr=0.05,
         draw_pred=False,
-        out_dir="./pred_data",
+        out_dir=out_dir,
         no_save_pred=False,
     )
 

@@ -15,6 +15,7 @@ sys.path.append("/root/autodl-tmp/pannuke_app/")
 # 得到每张图片的预测概率和label， 下一步是利用后处理得到 inst_map.
 import numpy as np
 import pandas as pd
+
 from src.evaluation.evaluate import calculate_map, evaluate
 from src.evaluation.post_proc import (
     dynamic_watershed_alias,
@@ -72,7 +73,7 @@ def compute_instseg(coco_api, pred_inst, seg_label, img_path):
     items = []
 
     for inst_id in np.unique(pred_inst)[1:]:
-        inst_mask = pred_inst == inst_id
+        inst_mask = np.where(pred_inst == inst_id, 1, 0)
         inst_label = seg_label[inst_mask]
         inst_type = np.argmax(np.bincount(inst_label))
         score = np.bincount(inst_label).max() / inst_mask.sum()
@@ -112,6 +113,7 @@ def evaluate_unet(
     results = infer(pred_dir, return_datasamples=True)
 
     os.makedirs(mid_save_dir, exist_ok=True)
+    os.makedirs(mid_save_dir.replace("inst", "prob_map"), exist_ok=True)
 
     coco_api = COCO(ann_file)
     metrics = []
@@ -130,30 +132,33 @@ def evaluate_unet(
         except Exception as e:
             prob_map = torch.softmax(seg_logits, dim=0).max(axis=0)[0].numpy()
 
-        pred_inst = dynamic_watershed_alias(prob_map, mode="prob")  # 得到每张图的inst_map
-        # inst_path = f"{mid_save_dir}/ {basename.replace('png', 'npy')}"
-        # pred_path = inst_path.replace("inst", "prob_map")
-        # np.save(pred_path, prob_map)
-        # np.save(save_path, inst_path)
-        metric = compute_seg(true_inst, pred_inst)
-        metrics.append(metric)
-        seg_label = seg_label.cpu().numpy().squeeze()
-        ann = compute_instseg(coco_api, pred_inst, seg_label, img_path)
-        map_data.extend(ann)
+        # TODO:每个模型都要调参数。
+        pred_inst = dynamic_watershed_alias(
+            prob_map, lamb=10, p_thresh=0.6, min_size=100, mode="prob"
+        )  # 得到每张图的inst_map
+        inst_path = f"{mid_save_dir}{basename.replace('png', 'npy')}"
+        pred_path = inst_path.replace("inst", "prob_map")
+        np.save(pred_path, prob_map)
+        np.save(inst_path, pred_inst)
+    #     metric = compute_seg(true_inst, pred_inst)
+    #     metrics.append(metric)
+    #     seg_label = seg_label.cpu().numpy().squeeze()
+    #     ann = compute_instseg(coco_api, pred_inst, seg_label, img_path)
+    #     map_data.extend(ann)
 
-    metrics_pd = pd.DataFrame(metrics, columns=["dice", "aji"], index=basenames)
-    # print(metrics.mean(axis=0))
-    avg_metric = metrics_pd.mean(skipna=True).values
+    # metrics_pd = pd.DataFrame(metrics, columns=["dice", "aji"], index=basenames)
+    # # print(metrics.mean(axis=0))
+    # avg_metric = metrics_pd.mean(skipna=True).values
 
-    overall_map, map_pd = calculate_map(map_data, coco_api)
-    res = pd.merge(metrics_pd, map_pd, left_index=True, right_index=True)
-    res["average_dice"] = avg_metric[0]
-    res["average_aji"] = avg_metric[1]
-    res["average_map"] = overall_map[0]
-    res["average_map50"] = overall_map[1]
+    # overall_map, map_pd = calculate_map(map_data, coco_api)
+    # res = pd.merge(metrics_pd, map_pd, left_index=True, right_index=True)
+    # res["average_dice"] = avg_metric[0]
+    # res["average_aji"] = avg_metric[1]
+    # res["average_map"] = overall_map[0]
+    # res["average_map50"] = overall_map[1]
 
-    if save_path is not None:
-        res.to_csv(save_path)
+    # if save_path is not None:
+    #     res.to_csv(save_path)
 
     return res
 

@@ -14,6 +14,7 @@ from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
 sys.path.append("/root/autodl-tmp/pannuke_app/")
+from src.data_process.convert2coco import convert_to_coco
 from src.data_process.pannuke2mask import pn2img, pn2inst_type
 
 
@@ -64,7 +65,7 @@ type_names = np.array(
 1822 701
 1853 869
 第1次split ['Bile-duct' 'Bladder' 'Cervix' 'Colon' 'Esophagus' 'HeadNeck' 'Kidney'
- 'Lung' 'Ovarian' 'Pancreatic' 'Prostate' 'Testis' 'Thyroid'] ['Breast' 'Stomach' 'Uterus' 'Skin' 'Adrenal_gland' 'Liver']
+ 'Lung' 'Ovarian' 'Pancreatic' 'Prostate' 'Testis' 'Thyroid'] ['Breast' 'Stomach' 'Uterus' 'Skin' 'Adrenal gland' 'Liver']
 1504 1152
 1419 1104
 1447 1275
@@ -132,7 +133,7 @@ def process_split_data():
                 f"{data_root}/Fold {fold_index+1}/masks/fold{fold_index+1}/masks.npy"
             )
 
-            save_dir = f"{save_root}/split_v{split_index+1}/training_data/train"
+            save_dir = f"{save_root}/training_data/train"
             if not os.path.exists(save_dir):
                 os.makedirs(save_dir)
 
@@ -142,7 +143,7 @@ def process_split_data():
             pn2img(images, save_dir, f"train_fold{fold_index+1}")
             pn2inst_type(masks, save_dir, f"train_fold{fold_index+1}")
 
-            save_dir = f"{save_root}/split_v{split_index+1}/training_data/test"
+            save_dir = f"{save_root}/training_data/test"
             if not os.path.exists(save_dir):
                 os.makedirs(save_dir)
 
@@ -153,14 +154,14 @@ def process_split_data():
             pn2inst_type(masks, save_dir, f"test_fold{fold_index+1}")
 
 
-def convert_to_coco():
+def convert_pn_to_coco():
     dataset_name = "pannuke"
     for split_index in range(3):
-        data_root = f"/root/autodl-tmp/pannuke_app/projects/pn_organ/split_v{split_index+1}/training_data"
-        data_dir = f"{data_root}/train"
-        save_path = f"{data_root}/train/train_annotations.json"
-        test_mode = False
-        convert_to_coco(dataset_name, data_dir, save_path, test_mode=test_mode)
+        data_root = f"/root/autodl-tmp/pannuke_app/projects/pn_organ/split_v{split_index+1}/split_v{split_index+1}/training_data"
+        # data_dir = f"{data_root}/train"
+        # save_path = f"{data_root}/train/train_annotations.json"
+        # test_mode = False
+        # convert_to_coco(dataset_name, data_dir, save_path, test_mode=test_mode)
 
         data_dir = f"{data_root}/test"
         save_path = f"{data_root}/test/test_annotations.json"
@@ -170,5 +171,5 @@ def convert_to_coco():
 
 if __name__ == "__main__":
     # fetch_split_index(type_names=type_names)
-    process_split_data()
-    # convert_to_coco()
+    # process_split_data()
+    convert_pn_to_coco()

@@ -5,5 +5,5 @@ model = YOLO(
 )  # load a pretrained model (recommended for training)
 
 # Train the model
-results = model.train(data="split_v2.yaml", epochs=100, imgsz=640)
+results = model.train(data="split_v2.yaml", epochs=30, imgsz=640)
 print("x")

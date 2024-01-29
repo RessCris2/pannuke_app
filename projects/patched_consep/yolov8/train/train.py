@@ -38,8 +38,8 @@ from ultralytics import YOLO
 # trainer = detect.DetectionTrainer(overrides=overrides)
 # trainer.train()
 
-model = YOLO("yolov5n6u.pt")
-model.train(data="consep.yaml", epochs=100, batch=2, imgsz=1000)
+model = YOLO("yolov8n-seg.pt")
+model.train(data="consep.yaml", epochs=100, batch=4, imgsz=640)
 
 # Load a model
 # model = YOLO('yolov8n-seg.yaml')  # build a new model from YAML

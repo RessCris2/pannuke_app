@@ -75,6 +75,12 @@ import argparse
 import copy
 import logging
 import os
+import sys
+
+import torch
+from docopt import docopt
+
+sys.path.append("/root/autodl-tmp/pannuke_app/src/models/hover")
 
 import torch
 from docopt import docopt
@@ -121,21 +127,24 @@ if __name__ == "__main__":
     args["gpu"] = "1"
     args["model_path"] = (
         # "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/train/model_data/net_epoch=1.tar",
-        "/root/autodl-tmp/pannuke_app/hover/logs/00/net_epoch=1.tar"
+        # "/root/autodl-tmp/pannuke_app/hover/logs/00/net_epoch=1.tar"
+        "/root/autodl-tmp/pannuke_app/projects/monusac/hovernet/train/net_epoch=10.tar"
     )
     # args['input_dir']=
-    args["type_info_path"] = "/root/autodl-tmp/pannuke_app/hover/type_info.json"
+    args[
+        "type_info_path"
+    ] = "/root/autodl-tmp/pannuke_app/projects/monusac/hovernet/predict/type_info.json"
     args["batch_size"] = 4
     args["nr_inference_workers"] = 4
     args["nr_post_proc_workers"] = 4
-    args["model_mode"] = "original"
+    args["model_mode"] = "fast"
     args["nr_types"] = 5
     args[
         "output_dir"
-    ] = "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/predict/pred_data"
+    ] = "/root/autodl-tmp/pannuke_app/projects/monusac/hovernet/predict/pred_data"
     args[
         "input_dir"
-    ] = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/test/imgs"
+    ] = "/root/autodl-tmp/pannuke_app/datasets/processed/MoNuSAC/test/imgs"
     args["mem_usage"] = 0.4
     nr_gpus = torch.cuda.device_count()
 
