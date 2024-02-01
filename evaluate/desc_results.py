@@ -55,7 +55,7 @@ def desc_dataset(coco, dataset, flag):
     df['flag'] = flag
     return df
 
-def get_desc_res()
+def get_desc_res():
     dataset_names =['consep', 'monusac','pannuke']
     datasets = ['CoNSeP','MoNuSAC','PanNuke']
     flags=['train', 'test']
@@ -63,7 +63,6 @@ def get_desc_res()
     dfs = []
 
     # 在循环外部加载COCO数据集
-
     for dataset in datasets:
         for flag in flags:
             coco = load_coco(f"{root_dir}/datasets/processed/{dataset}/{flag}/{flag}_annotations.json")
@@ -73,3 +72,20 @@ def get_desc_res()
     # 使用 extend 避免创建新的 DataFrame
     res = pd.concat(dfs, ignore_index=True)
     return res
+
+
+## 给三个指标绘图
+res = pd.read_csv("data/desc_res.csv")
+sns.boxplot(data=res, x='dataset',y='area_busy_rate')
+plt.ylabel('The proportion of nucleus area per image')
+plt.xlabel(None)
+
+# pannuke 细胞核数量密度中等
+sns.boxplot(data=res,x='dataset', y='avg_cnts')
+plt.ylim((0, 0.01))
+plt.xlabel(None)
+
+# pannuke 细胞核平均面积中等，consep则偏小
+sns.boxplot(data=res,x='dataset', y='areas')
+plt.ylim((0, 3000))
+plt.xlabel(None)
