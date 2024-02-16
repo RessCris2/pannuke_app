@@ -1,0 +1,16 @@
+projects,map_dataset,models,paths
+pannuke,pannuke,yolov8,/root/autodl-tmp/pannuke_app/projects/pannuke/yolov8/evaluation/yolov8.csv
+pannuke,pannuke,maskrcnn,/root/autodl-tmp/pannuke_app/projects/pannuke/maskrcnn/evaluation/maskrcnn.csv
+pannuke,pannuke,unet,autodl-tmp/pannuke_app/projects/pannuke/unet/evaluation/unet.csv
+pannuke,pannuke,hovernet,autodl-tmp/pannuke_app/projects/pannuke/hovernet/evaluation/hovernet.csv
+monusac,monusac,yolov8,None
+monusac,monusac,maskrcnn,autodl-tmp/pannuke_app/projects/monusac/maskrcnn/evaluation/maskrcnn.csv
+monusac,monusac,unet,None
+monusac,monusac,hovernet,None
+patched_monusac,monusac,hovernet,autodl-tmp/pannuke_app/projects/patched_monusac/hovernet/evaluation/hovernet.csv
+patched_monusac,monusac,yolov8,autodl-tmp/pannuke_app/projects/patched_monusac/yolov8/evaluation/yolov8.csv
+patched_consep,consep,maskrcnn,autodl-tmp/pannuke_app/projects/patched_consep/maskrcnn/evaluation/maskrcnn2.csv
+patched_consep,consep,hovernet,None
+patched_consep,consep,unet,None
+patched_consep,consep,yolov8,autodl-tmp/pannuke_app/projects/patched_consep/yolov8/evaluation/yolov8_whole.csv
+patched_consep,consep,yolov8,autodl-tmp/pannuke_app/projects/patched_consep/yolov8/evaluation/yolov8.csv

@@ -212,3 +212,53 @@ def get_desc_cate():
 
     # 显示DataFrame
     print(df.head())  # 显示前几行以验证结果
+
+    
+def gen_eval_df():
+    dfs = []
+    for index, row in config.iterrows():
+        path = row['paths']
+        if path == 'None':
+            continue
+        path = os.path.join('/root', path) if not path.startswith("/root") else path
+        df = pd.read_csv(path)
+        df.rename({'Unnamed: 0':'pic_name', '0':'map','1':'map50'}, axis=1, inplace=True)
+        df['projects'] = row['projects']
+        df['map_dataset']= row['map_dataset']
+        df['models']= row['models']
+        dfs.append(df)
+    eval_df = pd.concat(dfs)
+    
+
+
+def result_compare_fig_1():
+    """dataset 为横轴，不同模型表现为纵轴。
+    """
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+
+    # 假设你的数据存储在一个名为 eval_df 的 DataFrame 中
+
+    # 创建一个柱状图
+    plt.figure(figsize=(10, 6))
+
+    # 使用 seaborn 来绘制柱状图，x 轴是数据集，y 轴是 map 分数，hue 是模型
+    sns.barplot(x='map_dataset', y='map', hue='models', data=eval_df)
+
+    # 添加标题和标签
+    plt.title('Comparison of MAP Scores by Dataset and Model')
+    plt.xlabel('Dataset')
+    plt.ylabel('MAP Score')
+
+    # 旋转 x 轴标签以提高可读性
+    plt.xticks(rotation=45)
+
+    # 显示图例
+    plt.legend(title='Model', loc='upper right')
+
+    # 保存图表为图片文件
+    # plt.savefig('/mnt/data/map_comparison.png')
+    plt.tight_layout()
+    # 显示图表
+    plt.show()
