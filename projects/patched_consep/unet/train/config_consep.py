@@ -9,7 +9,7 @@ _base_ = [
 
 # consep
 dataset_type = "CoNSePDataset"
-data_root = "/root/autodl-tmp/pannuke_app/datasets/processed/CoNSeP/"
+data_root = "/root/autodl-tmp/pannuke_app/projects/patched_consep/training_data"
 # data_root = "/home/pannuke_app/train/datasets/CoNSeP/"
 metainfo = {
     "classes": ("Inflammatory", "Healthy_epithelial", "Epithelial", "Spindle-shaped"),
@@ -19,12 +19,12 @@ metainfo = {
 img_suffix = ".png"
 seg_map_suffix = ".png"
 
-img_scale = (1024, 1024)
-crop_size = (900, 900)
+img_scale = (256, 256)
+crop_size = (256, 256)
 train_pipeline = [
     dict(type="LoadImageFromFile"),
     dict(type="LoadAnnotations"),
-    dict(type="RandomResize", scale=img_scale, ratio_range=(0.5, 2.0), keep_ratio=True),
+    dict(type="RandomResize", scale=img_scale, ratio_range=(0.9, 120), keep_ratio=True),
     dict(type="RandomCrop", crop_size=crop_size, cat_max_ratio=0.75),
     dict(type="RandomFlip", prob=0.5),
     dict(type="PhotoMetricDistortion"),
@@ -55,8 +55,8 @@ tta_pipeline = [
     ),
 ]
 train_dataloader = dict(
-    batch_size=4,
-    num_workers=4,
+    batch_size=32,
+    num_workers=8,
     persistent_workers=True,
     sampler=dict(type="InfiniteSampler", shuffle=True),
     dataset=dict(
@@ -73,8 +73,8 @@ train_dataloader = dict(
     ),
 )
 val_dataloader = dict(
-    batch_size=1,
-    num_workers=4,
+    batch_size=32,
+    num_workers=8,
     persistent_workers=True,
     sampler=dict(type="DefaultSampler", shuffle=False),
     dataset=dict(
@@ -94,3 +94,9 @@ test_evaluator = val_evaluator
 
 # -----------------------------------------------------------------------------
 model = dict(decode_head=dict(num_classes=4), auxiliary_head=dict(num_classes=4))
+vis_backends = [dict(type='LocalVisBackend'),
+                dict(type='TensorboardVisBackend')]
+visualizer = dict(
+    type='SegLocalVisualizer',
+    vis_backends=vis_backends,
+    name='visualizer')
