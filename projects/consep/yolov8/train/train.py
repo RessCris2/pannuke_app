@@ -38,8 +38,11 @@ from ultralytics import YOLO
 # trainer = detect.DetectionTrainer(overrides=overrides)
 # trainer.train()
 
-model = YOLO("yolov5n6u.pt")
-model.train(data="consep.yaml", epochs=100, batch=2, imgsz=1000)
+# model = YOLO("yolov8s-seg.pt")
+model = YOLO(
+    "/root/autodl-tmp/pannuke_app/train/ultralytics/runs/segment/train18/weights/best.pt"
+)
+model.train(data="consep.yaml", epochs=100, batch=2, imgsz=800)
 
 # Load a model
 # model = YOLO('yolov8n-seg.yaml')  # build a new model from YAML

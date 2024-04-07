@@ -101,8 +101,6 @@ def pn2inst_type(pn_mask_path_or_mask, save_dir, prefix="train"):
         cv2.imwrite(seg_mask_path, type_mask)
 
 
-
-
 def pn2img(pn_path_or_img, save_dir, prefix="train"):
     """
     params:
@@ -111,15 +109,15 @@ def pn2img(pn_path_or_img, save_dir, prefix="train"):
     returns:
         None
     """
-    os.makedirs(save_dir, exist_ok=True)
+    os.makedirs(f"{save_dir}/imgs", exist_ok=True)
     if isinstance(pn_path_or_img, str):
         images = np.load(pn_path)
     else:
         images = pn_path_or_img
-        
+
     for i in range(len(images)):
         image = images[i]
-        save_path = osp.join(save_dir, "imgs", "{}_{}.png".format(prefix, i))
+        save_path = f"{save_dir}/imgs/{prefix}_{i}.png"
         cv2.imwrite(save_path, image)
 
 
@@ -130,24 +128,4 @@ if __name__ == "__main__":
     save_dir = f"/root/autodl-tmp/pannuke_pre/datasets/pannuke/{prefix}/imgs"
     pn2img(pn_path, save_dir, prefix)
 
-    # 生成 inst, seg_mask
-    # pn_mask_path = (
-    #     "/root/autodl-tmp/pannuke_pre/datasets/pannuke/train/masks/fold1/masks.npy"
-    # )
-    # save_dir = "/root/autodl-tmp/pannuke_pre/datasets/pannuke/train/"
-    # prefix = "train"
-    # pn2inst_type(pn_mask_path, save_dir, prefix)
-
-    # pn_mask_path = (
-    #     "/root/autodl-tmp/pannuke_pre/datasets/pannuke/test/masks/fold3/masks.npy"
-    # )
-    # save_dir = "/root/autodl-tmp/pannuke_pre/datasets/pannuke/test/"
-    # prefix = "test"
-    # pn2inst_type(pn_mask_path, save_dir, prefix)
-
-    # pn_mask_path = (
-    #     "/root/autodl-tmp/pannuke_pre/datasets/pannuke/test/masks/fold1/masks.npy"
-    # )
-    # save_dir = "/root/autodl-tmp/pannuke_pre/datasets/pannuke/test/"
-    # prefix = "test"
-    # pn2inst_type(pn_mask_path, save_dir, prefix)
+  

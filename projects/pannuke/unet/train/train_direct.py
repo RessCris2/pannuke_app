@@ -26,12 +26,6 @@ if __name__ == "__main__":
     config_path = "config.py"
     cfg = Config.fromfile(config_path)
     print(f"Config:\n{cfg.pretty_text}")
-    # Modify dataset type and path
-    # cfg.dataset_type = "PanNukeDataset"
-    # cfg.data_root = "/root/autodl-tmp/datasets/pannuke/coco_format/"
-    # cfg.train_dataloader.batch_size = 64
-    # cfg.val_dataloader.batch_size = 64
-    # Set up working dir to save files and logs.
     cfg.work_dir = "work-dir"
     runner = Runner.from_cfg(cfg)
 

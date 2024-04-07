@@ -95,7 +95,7 @@ def arrange_label(mat):
     return mat
 
 
-def dynamic_watershed_alias(p_img, lamb=1, p_thresh=0.5, mode="dist"):
+def dynamic_watershed_alias(p_img, lamb=8, p_thresh=0.9, min_size=100, mode="dist"):
     """
     Applies our dynamic watershed to 2D prob/dist image.
     """
@@ -112,10 +112,10 @@ def dynamic_watershed_alias(p_img, lamb=1, p_thresh=0.5, mode="dist"):
     ws_labels = watershed(Hrecons, markers_Probs_inv, mask=b_img)
     ar_label = arrange_label(ws_labels)
     # TODO: test 是否需要加
-    ar_label = remove_small_objects(ar_label, min_size=100, connectivity=1)
+    ar_label = remove_small_objects(ar_label, min_size=min_size, connectivity=1)
     wsl = generate_wsl(ar_label)
     ar_label[wsl > 0] = 0
-
+    ar_label = arrange_label(ar_label)
     return ar_label
 
 
@@ -127,11 +127,11 @@ def post_process(prob_image, param=7, thresh=0.5, mode="dist"):
     return segmentation_mask
 
 
-if __name__ == "__main__":
-    ma = cv2.imread(
-        "/root/autodl-tmp/com_models/DIST/datafolder/TNBC_NucleiSegmentation/GT_01/\
-        01_1.png",
-        0,
-    )
-    mask = img_as_float(ma)
-    post_process(mask)
+# if __name__ == "__main__":
+#     ma = cv2.imread(
+#         "/root/autodl-tmp/com_models/DIST/datafolder/TNBC_NucleiSegmentation/GT_01/\
+#         01_1.png",
+#         0,
+#     )
+#     mask = img_as_float(ma)
+#     post_process(mask)

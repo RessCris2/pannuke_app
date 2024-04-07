@@ -3,14 +3,6 @@ import sys
 import torch.optim as optim
 
 sys.path.append("/root/autodl-tmp/pannuke_app/src/models/hover")
-from models.hovernet.net_desc import create_model
-from models.hovernet.run_desc import (
-    proc_valid_step_output,
-    train_step,
-    valid_step,
-    viz_step_output,
-)
-from models.hovernet.targets import gen_targets, prep_sample
 from run_utils.callbacks.base import (
     AccumulateRawOutput,
     PeriodicSaver,
@@ -23,6 +15,15 @@ from run_utils.callbacks.base import (
 )
 from run_utils.callbacks.logging import LoggingEpochOutput, LoggingGradient
 from run_utils.engine import Events
+
+from models.hovernet.net_desc import create_model
+from models.hovernet.run_desc import (
+    proc_valid_step_output,
+    train_step,
+    valid_step,
+    viz_step_output,
+)
+from models.hovernet.targets import gen_targets, prep_sample
 
 
 # TODO: training config only ?
@@ -58,8 +59,8 @@ def get_config(nr_type, mode):
                         },
                         # path to load, -1 to auto load checkpoint from previous phase,
                         # None to start from scratch
-                        "pretrained": "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/train/pretrained/ImageNet-ResNet50-Preact_pytorch.tar",
-                        # 'pretrained': None,
+                        "pretrained": "/root/autodl-tmp/pannuke_app/projects/monusac/hovernet/train/ImageNet-ResNet50-Preact_pytorch.tar",
+                        # "pretrained": "/root/autodl-tmp/pannuke_app/projects/monusac/hovernet/train/model_data/00/net_epoch=13.tar",
                     },
                 },
                 "target_info": {"gen": (gen_targets, {}), "viz": (prep_sample, {})},
@@ -67,7 +68,7 @@ def get_config(nr_type, mode):
                     "train": 16,
                     "valid": 16,
                 },  # engine name : value
-                "nr_epochs": 50,
+                "nr_epochs": 30,
             },
             {
                 "run_info": {

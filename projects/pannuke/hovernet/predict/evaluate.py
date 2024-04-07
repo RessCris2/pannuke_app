@@ -125,21 +125,33 @@ def calculate_map(ann_file, pred_result_dir):
         results.extend(items)
     pred = coco_api.loadRes(results)
     coco_eval = COCOeval(coco_api, pred, iouType="bbox")
-    # coco_eval.params.maxDets = [100, 500, 1000]
+    coco_eval.params.maxDets = [100, 500, 1000]
     coco_eval.evaluate()
     coco_eval.accumulate()
     coco_eval.summarize()
+
+    # 计算每张图像的 mAP
+    per_image_mAPs = []
+
+    for img_id in coco_api.getImgIds():
+        coco_eval.params.imgIds = [img_id]
+        coco_eval.evaluate()
+        coco_eval.accumulate()
+        coco_eval.summarize()
+
+        # 获取每张图像的 mAP 值
+        per_image_mAPs.append(coco_eval.stats[1])
+
+    # 打印每张图像的 mAP 值
+    for i, mAP in enumerate(per_image_mAPs):
+        print(f"mAP for image {i + 1}: {mAP}")
 
 
 if __name__ == "__main__":
     pred_dir = "pred_data/mat"
     true_dir = "/root/autodl-tmp/pannuke_app/datasets/processed/PanNuke/test/inst"
-    # metrics = evaluate_pq(true_dir, pred_dir)
-    # print(metrics)
-    # mat_path = "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/predict/pred_data/mat/test_12.mat"
-    # convert_mat2coco(mat_path)
     ann_file = "/root/autodl-tmp/pannuke_app/datasets/processed/PanNuke/test/test_annotations.json"
-    # calculate_map(ann_file, pred_dir)
-    evaluate_pq(true_dir, pred_dir)
+    calculate_map(ann_file, pred_dir)
+    # evaluate_pq(true_dir, pred_dir)
     # metrics = run_nuclei_inst_stat(pred_dir, true_dir, print_img_stats=False)
     # print(metrics)

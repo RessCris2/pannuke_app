@@ -15,15 +15,11 @@ sys.path.append("/root/autodl-tmp/pannuke_app/")
 # 得到每张图片的预测概率和label， 下一步是利用后处理得到 inst_map.
 import numpy as np
 import pandas as pd
-from src.evaluation.post_proc import (
-    dynamic_watershed_alias,
-)  # 是不是应该放在 src.models.unet 中？
-from src.evaluation.stats_utils import (
-    get_dice_1,
-    get_fast_aji_plus,
-    get_fast_pq,
-    remap_label,
-)
+from src.evaluation.evaluate import calculate_map, evaluate
+from src.evaluation.post_proc import \
+    dynamic_watershed_alias  # 是不是应该放在 src.models.unet 中？
+from src.evaluation.stats_utils import (get_dice_1, get_fast_aji_plus,
+                                        get_fast_pq, remap_label)
 
 
 def compute_seg(true, pred):
@@ -90,7 +86,7 @@ def compute_instseg(coco_api, pred_inst, seg_label, img_path):
     return items
 
 
-def infer_dir(
+def evaluate(
     cfg_path, ckpt_filename, pred_dir, ann_file, save_path
 ):  # (pred_dir, cfg_path, ckpt_path, device="cuda"):
     """
@@ -142,8 +138,8 @@ def infer_dir(
         ann = compute_instseg(coco_api, pred_inst, seg_label, img_path)
         map_data.extend(ann)
 
-    metrics = pd.DataFrame(metrics, columns=["dice", "aji"], index=basenames)
-    metrics.to_csv(f"{pred_dir}/../metrics.csv")
+    metrics_pd = pd.DataFrame(metrics, columns=["dice", "aji"], index=basenames)
+    # metrics.to_csv(f"{pred_dir}/../metrics.csv")
     print(metrics.mean(axis=0))
     print(metrics)
     avg_metric = np.mean(metrics, axis=0)
@@ -151,21 +147,33 @@ def infer_dir(
     print(avg_pq)
 
     # calculate map
-    tt = coco_api.loadRes(map_data)
-    cocoEval = COCOeval(coco_api, tt, iouType="segm")
-    cocoEval.evaluate()
-    cocoEval.accumulate()
-    cocoEval.summarize()
+    # tt = coco_api.loadRes(map_data)
+    # cocoEval = COCOeval(coco_api, tt, iouType="segm")
+    # cocoEval.evaluate()
+    # cocoEval.accumulate()
+    # cocoEval.summarize()
+    overall_map, map_pd = calculate_map(map_data, coco_api)
+    res = pd.merge(metrics_pd, map_pd, left_index=True, right_index=True)
+    res["average_dice"] = avg_metric[0]
+    res["average_aji"] = avg_metric[1]
+    res["average_map"] = overall_map[0]
+    res["average_map50"] = overall_map[1]
 
-    # 保存 map_data
     if save_path is not None:
-        assert save_path.endswith("json"), "has to be json file"
-        with open(save_path, "w") as json_file:
-            json.dump(
-                map_data,
-                json_file,
-                default=lambda x: x.decode() if isinstance(x, bytes) else x,
-            )  # TODO; 检查是否ok 保存一直报错，segmentation 是bytes 格式？那maskrcnn那边都没问题？
+        res.to_csv(save_path)
+
+    return res
+    # return overall_map, map_pd, avg_metric, metrics
+
+    # # 保存 map_data
+    # if save_path is not None:
+    #     assert save_path.endswith("json"), "has to be json file"
+    #     with open(save_path, "w") as json_file:
+    #         json.dump(
+    #             map_data,
+    #             json_file,
+    #             default=lambda x: x.decode() if isinstance(x, bytes) else x,
+    #         )  # TODO; 检查是否ok 保存一直报错，segmentation 是bytes 格式？那maskrcnn那边都没问题？
 
 
 # 根据 inst_map, 和label的情况，计算每个inst的label.
@@ -178,4 +186,4 @@ if __name__ == "__main__":
     ckpt_filename = "/root/autodl-tmp/pannuke_app/projects/pannuke/unet/train/work-dir/iter_32000.pth"
     ann_file = "/root/autodl-tmp/pannuke_app/datasets/processed/PanNuke/test/test_annotations.json"
     save_path = "/root/autodl-tmp/pannuke_app/projects/pannuke/unet/predict/pred.json"
-    infer_dir(cfg_path, ckpt_filename, pred_dir, ann_file, save_path)
+    res = evaluate(cfg_path, ckpt_filename, pred_dir, ann_file, save_path)

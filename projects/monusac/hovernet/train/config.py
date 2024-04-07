@@ -18,7 +18,7 @@ class Config(object):
         self.debug = False
 
         model_name = "hovernet"
-        model_mode = "original"  # choose either `original` or `fast`
+        model_mode = "fast"  # choose either `original` or `fast`
 
         if model_mode not in ["original", "fast"]:
             raise Exception("Must use either `original` or `fast` as model mode")
@@ -33,14 +33,14 @@ class Config(object):
         # If original model mode is used, use [270,270] and [80,80] for act_shape and out_shape respectively
         # If fast model mode is used, use [256,256] and [164,164] for act_shape and out_shape respectively
         aug_shape = [
-            540,
-            540,
+            256,
+            256,
         ]  # patch shape used during augmentation (larger patch may have less border artefacts)
         act_shape = [
-            270,
-            270,
+            256,
+            256,
         ]  # patch shape used as input to network - central crop performed after augmentation
-        out_shape = [80, 80]  # patch shape at output of network
+        out_shape = [164, 164]  # patch shape at output of network
 
         if model_mode == "original":
             if act_shape != [270, 270] or out_shape != [80, 80]:
@@ -53,15 +53,15 @@ class Config(object):
                     "If using `fast` mode, input shape must be [256,256] and output shape must be [164,164]"
                 )
 
-        self.dataset_name = "consep"  # extracts dataset info from dataset.py
-        self.log_dir = "/root/autodl-tmp/pannuke_app/projects/consep/hovernet/train/model_data/"  # where checkpoints will be saved
+        self.dataset_name = "monusac"  # extracts dataset info from dataset.py
+        self.log_dir = "/root/autodl-tmp/pannuke_app/projects/monusac/hovernet/train/model_data/"  # where checkpoints will be saved
 
         # paths to training and validation patches
         self.train_dir_list = [
-            "/root/autodl-tmp/pannuke_app/projects/monusac/hovernet/train/dataset/training_data/monusac/monusac/train/350x350_164x164"
+            "/root/autodl-tmp/pannuke_app/projects/monusac/training_data/train/npys/"
         ]
         self.valid_dir_list = [
-            "/root/autodl-tmp/pannuke_app/projects/monusac/hovernet/train/dataset/training_data/monusac/monusac/valid/350x350_164x164"
+            "/root/autodl-tmp/pannuke_app/projects/monusac/training_data/test/npys/"
         ]
 
         self.shape_info = {
